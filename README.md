@@ -2,9 +2,11 @@
 
 https://www.youtube.com/shorts/VLrRbZY5q3w
 
-https://www.adafruit.com/product/5841
+camera https://www.adafruit.com/product/5841
 
-https://tronixstuff.com/2019/10/15/a-tiny-tiny-0-49-64-x-32-graphic-i2c-oled-display-with-arduino/
+screen https://tronixstuff.com/2019/10/15/a-tiny-tiny-0-49-64-x-32-graphic-i2c-oled-display-with-arduino/
+
+arduino emulator https://wokwi.com/arduino
 
 default hardware spec is a chip that has an arduino processor, a tiny screen (that displays eyes when idle, and text when speaking), a camera, and a microphone (but no physical eyes or speaker or anything, but does have an I/O port)
 

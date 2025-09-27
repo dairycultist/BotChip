@@ -8,7 +8,7 @@ screen https://tronixstuff.com/2019/10/15/a-tiny-tiny-0-49-64-x-32-graphic-i2c-o
 
 arduino emulator https://wokwi.com/arduino
 
-default hardware spec is a chip that has an arduino processor, a tiny screen (that displays eyes when idle, and text when speaking), a camera, and a microphone (but no physical eyes or speaker or anything, but does have an I/O port)
+default hardware spec is a "system on a chip" that has an arduino processor, a tiny screen (that displays eyes when idle, and text when speaking), a camera, and a microphone (but no physical eyes or speaker or anything, but does have an I/O interface for auxilliaries)
 
 what if I made an open source robo with hardware and AI software interacting with an abstraction layer for behaviours like eye-tracking and such
 

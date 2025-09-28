@@ -26,8 +26,9 @@ research animation, since that's just Animating life right
 ---
 
 Upon recieving and parsing audio input, BotChip performs **request prediction** (entirely algorithmic, no AI) to determine how to response.
+
 - If it seems like the audio isn't addressing BotChip, it does nothing.
 - If the request is simple, a response may be **rote** and thus retrievable from a predetermined response list for that request type (for example, responding to "hi" doesn't require an entire AI poll, just respond "hey").
-- If the request is complex (and requires a poll to the AI backend), request prediction still serves the role of determining what sort of emote BotChip should perform between recieving the request and responding (due to AI backend latency). This could be looking down while lost in thought, looking forward puzzled, etc.
+- If the request is complex (and requires a poll to the AI backend), request prediction still serves the role of determining what sort of emote BotChip should perform between recieving the request and responding (due to AI backend latency). This could be looking down while lost in thought, looking forward puzzled, rolling their eyes, etc.
 
-Responses should ideally also take into account certain state information, such as if BotChip is being roused from sleep (i.e. keeping the screen off to prevent burn-in), if BotChip has been watching you for a while without dialogue, and so forth.
+Responses should ideally also take into account certain state information, such as if BotChip is being roused from sleep (i.e. keeping the screen off to prevent burn-in), if BotChip has been watching you for a while without dialogue, etc.

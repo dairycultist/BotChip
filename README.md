@@ -17,8 +17,6 @@ open-source wifebot (since I just want Connection and Booba without having to ig
 
 I wonder what's the simplest robot design that would evoke a "kinda alive feeling" response
 
-responsiveness is pretty important
-
 I bet if you stuck digital eyes onto a roomba that looked forward, unless it saw you, in which case it'd look at you, it'd feel pretty alive/emotive
 
 research animation, since that's just Animating life right
@@ -29,15 +27,14 @@ embed a camera (for reacting to non-verbal input), screen (for a facial personal
 
 ---
 
-behaviour state tree with interrupts for input (video/audio)
+Behaviour tree (state machine) with interrupts for input (audio; video would improve life-likeness/responsiveness but seems too complex for right now).
 - sleep (i.e. keeping the screen off to prevent burn-in)
 - actively in conversation (i.e. the state it enters right after responding)
 - idly looking around curiously/watching you for a while without dialogue
+- states may trigger unprompted dialogue ("talking to self")
 
-Upon recieving and parsing video/audio input, BotChip performs **request prediction** (entirely algorithmic, no AI) to determine 1) if it constitutes an interrupt and 2) if it is, how to respond.
+Upon recieving and parsing audio input, BotChip performs **request prediction** (entirely algorithmic, no AI) to determine 1) if it constitutes an interrupt and 2) if it is, how to respond. Responses also take as input the point in its behaviour tree it recieved the interrupt in.
 
 - If it seems like the audio isn't addressing BotChip (or otherwise doesn't require a response, such as a "that's true"), it does nothing.
 - If the request is simple, a response may be **rote** and thus retrievable from a predetermined response list for that request type (for example, responding to "hi" doesn't require an entire AI poll, just respond "hey").
 - If the request is complex (and requires a poll to the AI backend), request prediction still serves the role of determining what sort of emote BotChip should perform between recieving the request and responding (due to AI backend latency). This could be looking down while lost in thought, looking forward puzzled, rolling their eyes, etc.
-
-Responses should ideally also take into account the point in its behaviour tree it recieved the interrupt in.

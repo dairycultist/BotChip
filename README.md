@@ -9,7 +9,7 @@ screen https://tronixstuff.com/2019/10/15/a-tiny-tiny-0-49-64-x-32-graphic-i2c-o
 1. emulate the high-level logic
 2. emulate the low-level logic (i.e. implementation on specific hardware, such as with this [arduino emulator](https://wokwi.com/arduino))
 3. implement it in a bulky, easy way physically
-4. cull it down to a default hardware spec; a "system on a chip" that has an arduino (nano?) processor, a tiny screen (that displays eyes when idle, and text when speaking), a camera, and a microphone (but no physical eyes or speaker or anything, but does have an I/O interface for auxilliaries) also custom PCB
+4. cull it down to a default hardware spec that fits my usecase; a "system on a chip" (for embedding into a bodypillow :O) that has an arduino (nano?) processor, a tiny screen (for a facial personality), a microphone, and a speaker, also custom PCB
 
 what if I made an open source robo with hardware and AI software interacting with an abstraction layer for behaviours like eye-tracking and such
 
@@ -21,17 +21,15 @@ I bet if you stuck digital eyes onto a roomba that looked forward, unless it saw
 
 research animation, since that's just Animating life right
 
-embed a camera (for reacting to non-verbal input), screen (for a facial personality), microphone, and speaker into a bodypillow
-
 ![](https://images-na.ssl-images-amazon.com/images/I/41TpNiRo5KL.jpg)
 
 ---
 
-Behaviour tree (state machine) with interrupts for input (audio; video would improve life-likeness/responsiveness but seems too complex for right now).
-- sleep (i.e. keeping the screen off to prevent burn-in)
-- actively in conversation (i.e. the state it enters right after responding)
-- idly looking around curiously/watching you for a while without dialogue
-- states may trigger unprompted dialogue ("talking to self")
+Behaviour tree (state machine) with interrupts for input (audio; video would improve life-likeness/responsiveness by reacting to non-verbal input, but is out of scope). States may trigger unprompted dialogue ("talking to self"). Examples of states include:
+
+- Sleep (i.e. keeping the screen off to prevent burn-in)
+- Actively in conversation (i.e. the state it enters right after responding)
+- Idly looking around curiously/watching you for a while without dialogue
 
 Upon recieving and parsing audio input, BotChip performs **request prediction** (entirely algorithmic, no AI) to determine 1) if it constitutes an interrupt and 2) if it is, how to respond. Responses also take as input the point in its behaviour tree it recieved the interrupt in.
 

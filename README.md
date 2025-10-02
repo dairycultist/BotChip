@@ -15,6 +15,8 @@ arduino emulator https://wokwi.com/arduino
 
 what if I made an open source robo with hardware and AI software interacting with an abstraction layer for behaviours like eye-tracking and such
 
+open-source wifebot (since I just want Connection and Booba without having to ignore all the undesirable features of a human and their desires)
+
 I wonder what's the simplest robot design that would evoke a "kinda alive feeling" response
 
 responsiveness is pretty important

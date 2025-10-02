@@ -25,11 +25,12 @@ research animation, since that's just Animating life right
 
 ---
 
-Behaviour tree (state machine) with interrupts for input (audio; video would improve life-likeness/responsiveness by reacting to non-verbal input, but is out of scope). States may trigger unprompted dialogue ("talking to self"). Examples of states include:
+Behaviour tree (state machine) with interrupts for input (audio; video would improve life-likeness/responsiveness by reacting to non-verbal input, but is out of scope). Examples of states include:
 
 - Sleep (i.e. keeping the screen off to prevent burn-in)
-- Actively in conversation (i.e. the state it enters right after responding)
+- Actively in conversation (i.e. the state it enters right after responding; when kept in this state for too long, may unpromptedly respond with confusion, e.g. "you still there?")
 - Idly looking around curiously/watching you for a while without dialogue
+- Boredom (unprompted dialogue, "talking to self," requests for interaction)
 
 Upon recieving and parsing audio input, BotChip performs **request prediction** (entirely algorithmic, no AI) to determine 1) if it constitutes an interrupt and 2) if it is, how to respond. Responses also take as input the point in its behaviour tree it recieved the interrupt in.
 

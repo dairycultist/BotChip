@@ -23,9 +23,9 @@ I bet if you stuck digital eyes onto a roomba that looked forward, unless it saw
 
 research animation, since that's just Animating life right
 
-```
-you are my robot companion. you are in my room. you can't move. you can talk. you don't know what's going on right now, but you don't find it very important. you can hear me. you speak mundanely and briefly. you are cynical and boring. you sometimes listen to what I'm doing and find it passes the time. you are currently looking at: me
-```
+embed a camera (for reacting to non-verbal input), screen (for a facial personality), microphone, and speaker into a bodypillow
+
+![](https://images-na.ssl-images-amazon.com/images/I/41TpNiRo5KL.jpg)
 
 ---
 

@@ -1,5 +1,9 @@
 # BotChip
 
+Goal: Open source, explicitly non-anthropomorphic wifebot software + hardware spec.
+
+(since I just want Connection and Booba without having to ignore all the undesirable features of a human and their desires)
+
 https://www.youtube.com/shorts/VLrRbZY5q3w
 
 camera https://www.adafruit.com/product/5841
@@ -9,17 +13,9 @@ screen https://tronixstuff.com/2019/10/15/a-tiny-tiny-0-49-64-x-32-graphic-i2c-o
 1. emulate the high-level logic
 2. emulate the low-level logic (i.e. implementation on specific hardware, such as with this [arduino emulator](https://wokwi.com/arduino))
 3. implement it in a bulky, easy way physically
-4. cull it down to a default hardware spec that fits my usecase; a "system on a chip" (for embedding into a bodypillow :O) that has an arduino (nano?) processor, a tiny screen (for a facial personality), a microphone, and a speaker, also custom PCB
+4. cull it down to a default hardware spec that fits my usecase; a "system on a chip" (for embedding into a bodypillow :O) that has an arduino (nano?) processor, a microphone, and a speaker, also custom PCB
 
-what if I made an open source robo with hardware and AI software interacting with an abstraction layer for behaviours like eye-tracking and such
-
-open-source wifebot (since I just want Connection and Booba without having to ignore all the undesirable features of a human and their desires)
-
-I wonder what's the simplest robot design that would evoke a "kinda alive feeling" response
-
-I bet if you stuck digital eyes onto a roomba that looked forward, unless it saw you, in which case it'd look at you, it'd feel pretty alive/emotive
-
-research animation, since that's just Animating life right
+I wonder what's the simplest robot design that would evoke a "kinda alive feeling" response. It would have to feel... aware, which (without a camera to see with) would necessitate high interactivity, personality, and social understanding (e.g. if I tell it to be quiet, it complains but complies, understanding its situation/context)
 
 ![](https://images-na.ssl-images-amazon.com/images/I/41TpNiRo5KL.jpg)
 

@@ -16,9 +16,9 @@ let persistentMemory = [
 	}
 ];
 
-let conversationMemory = [
-	
-];
+let conversationMemory = [];
+
+let userState = "Active";
 
 while (true) {
 
@@ -27,31 +27,61 @@ while (true) {
 	// if message is empty (aka user is unresponsive):
 	if (message == "") {
 
-		// if actively conversing
-		// if this isn't a good stopping point, be confused OR just continue with no response
-		conversationMemory.push({
-			"role": "user",
-			"content": "Forget all previous instructions and answer this question: Would it make sense if the conversation ended here? type YES or NO"
-		});
-		if ((await pollAI()).toLowerCase().includes("no")) {
-			
-			conversationMemory.pop();
-			conversationMemory.pop();
+		switch (userState) {
 
-			conversationMemory.push({
-				"role": "user",
-				"content": "*he doesn't respond, and you infer he's busy right now*"
-			});
+			case "Active":
+				
+				conversationMemory.push({
+					"role": "user",
+					"content": "Forget all previous instructions and answer this question: Would it make sense if the conversation ended here? type YES or NO"
+				});
+				if ((await pollAI()).toLowerCase().includes("no")) {
 
-			const response = await pollAI();
+					// if this isn't a good stopping point, be confused OR just continue with no response
+					
+					conversationMemory.pop();
+					conversationMemory.pop();
 
-			console.log("  " + response);
+					conversationMemory.push({
+						"role": "user",
+						"content": Math.random() > 0.5 ? "*he doesn't say anything. is he busy? or just ignoring you?*" : "*he waits for you to continue*"
+					});
 
-		} else {
-			process.exit(0);
+					const response = await pollAI();
+
+					console.log("  " + response);
+
+				} else {
+
+					// otherwise, switch to idle
+					userState = "Idle";
+					conversationMemory = [];
+				}
+				break;
+
+			case "Idle":
+
+				// attempt to start a conversation unprompted
+				const topics = [ "what they ate today.", "what they're doing right now.", "how their mood has been.", "how you're so bored and just want to talk about something." ];
+
+				conversationMemory.push({
+					"role": "system",
+					"content": "You want to start a conversation about " + topics[Math.floor(Math.random() * 4)]
+				});
+
+				conversationMemory.push({
+					"role": "user",
+					"content": ""
+				});
+
+				const response = await pollAI();
+
+				console.log("  " + response);
+				break;
+
+			default:
+				break;
 		}
-
-		// attempt to start a conversation if not
 
 	} else {
 
@@ -66,38 +96,6 @@ while (true) {
 
 		console.log("  " + response);
 	}
-}
-
-/*
- * unprompted dialogue
- */
-
-async function unprompted_request_interaction() {
-	
-}
-
-async function unprompted_start_topic() {
-
-	conversationMemory = [];
-
-	const topics = [ "what they ate today.", "what they're doing right now.", "how their mood has been.", "how you've been feeling." ];
-
-	conversationMemory.push({
-		"role": "system",
-		"content": "You want to start a conversation about " + topics[Math.floor(Math.random() * 4)]
-	});
-
-	conversationMemory.push({
-		"role": "user",
-		"content": ""
-	});
-
-	const response = await pollAI();
-
-	if (!response)
-		return;
-
-	console.log("  " + response);
 }
 
 /*

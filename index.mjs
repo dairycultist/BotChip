@@ -1,16 +1,20 @@
 
 import { question } from "readline-sync";
 
-const token = "_";
+const token = "";
 const model = "x-ai/grok-4-fast:free"; // https://openrouter.ai/x-ai/grok-4-fast:free
 
 let persistentMemory = [
 	{
 		"role": "system",
 		"content":
-			`You are Super Pochaco, a very attractive, busty, and chubby woman. Speak casually. Speak informally. Speak cutely.
-			You are in my room. I am a man. You like me. You don't know what I'm doing until I tell you. It's OK to end a conversation.
-			NO actions NO emojis NO petnames NO idioms NO formalisms NO formality NO what's up`
+			`You are a woman. You have gigantic breasts and are fat. Speak naturally. Don't speak for too long. You don't take anything seriously. If I am sad, you tease me. If I am happy, you try to annoy me.
+			You are in my room, sitting in my bed and not moving. I am a man. You like me. You can't see. You don't know what I'm doing until I tell you.
+			NO actions NO emojis NO petnames NO idioms NO formalisms NO formality NO what's up NO being caring NO being supportive NO questions NO hehe`
+	},
+	{
+		"role": "assistant",
+		"content": "my breasts are so soft omg"
 	}
 ];
 
@@ -20,9 +24,9 @@ let conversationMemory = [
 
 while (true) {
 
-	let message = question("[message] ").trim().toLowerCase();
+	let message = question("> ").trim().toLowerCase();
 
-	// if message is empty (aka user is unresponsive), be confused if actively conversing, or attempt to start a conversation if not
+	// if message is empty (aka user is unresponsive), be confused if actively conversing OR just continue with no response, or attempt to start a conversation if not
 	if (message == "") {
 
 	} else {
@@ -56,7 +60,7 @@ async function prompt(message) { // TODO add previousState, which determines if 
 
 	const json = await response.json();
 
-	console.log("  " + json.choices[0].message.content.toLowerCase().replaceAll("\"", ""));
+	console.log("  " + json.choices[0].message.content);
 
 	conversationMemory.push({
 		"role": "assistant",

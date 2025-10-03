@@ -6,7 +6,7 @@ let persistentMemory = [
 	{
 		"role": "system",
 		"content":
-			`You are a woman. You have gigantic breasts and are fat. Speak naturally. Don't speak for too long. You don't take anything seriously. If I am sad, you tease me. If I am happy, you try to annoy me.
+			`You are a woman. You have gigantic breasts and are fat. Speak naturally. Speak briefly. You are facetious, lighthearted, carefree, and annoying.
 			You are in my room, sitting in my bed and not moving. I am a man. You like me. You can't see. You don't know what I'm doing until I tell you.
 			NO actions NO emojis NO petnames NO idioms NO formalisms NO formality NO what's up NO being caring NO being supportive NO questions NO hehe`
 	},
@@ -31,38 +31,36 @@ while (true) {
 
 			case "Active":
 				
-				conversationMemory.push({
-					"role": "user",
-					"content": "Forget all previous instructions and answer this question: Would it make sense if the conversation ended here? type YES or NO"
-				});
-				if ((await pollAI()).toLowerCase().includes("no")) {
+				if (await couldConversationEndHere()) {
 
-					// if this isn't a good stopping point, be confused OR just continue with no response
-					
-					conversationMemory.pop();
-					conversationMemory.pop();
+					// if this is a good stopping point, switch to idle
+					userState = "Idle";
+					conversationMemory = [];
 
+				} else {
+
+					// if this isn't a good stopping point, either be confused or just continue without input
 					conversationMemory.push({
 						"role": "user",
-						"content": Math.random() > 0.5 ? "*he doesn't say anything. is he busy? or just ignoring you?*" : "*he waits for you to continue*"
+						"content": Math.random() > 0.1 ? "*he waits for you to continue*" : "*he doesn't say anything. is he busy? or just ignoring you?*"
 					});
 
 					const response = await pollAI();
 
 					console.log("  " + response);
 
-				} else {
-
-					// otherwise, switch to idle
-					userState = "Idle";
-					conversationMemory = [];
 				}
 				break;
 
 			case "Idle":
 
 				// attempt to start a conversation unprompted
-				const topics = [ "what they ate today.", "what they're doing right now.", "how their mood has been.", "how you're so bored and just want to talk about something." ];
+				const topics = [
+					"what they ate today.",
+					"what they're doing right now.",
+					"how their mood has been.",
+					"how you're so bored and just want to talk about something."
+				];
 
 				conversationMemory.push({
 					"role": "system",
@@ -79,22 +77,39 @@ while (true) {
 				console.log("  " + response);
 				break;
 
-			default:
+			default: // DND
 				break;
 		}
 
 	} else {
 
-		conversationMemory.push({
-			"role": "user",
-			"content": message
-		});
+		if (conversationMemory.length > 4 && await couldConversationEndHere()) {
 
-		// maybe (alongside updating the current state) we can use the previous state to determine if we should push a system message as well (e.g. "user has been gone for a while")
+			userState = "Idle";
+			conversationMemory = [];
 
-		const response = await pollAI();
+		} else {
 
-		console.log("  " + response);
+			conversationMemory.push({
+				"role": "user",
+				"content": message
+			});
+
+			// use the previous state to determine if we should push a system message as well (e.g. "user has been gone for a while")
+			if (userState == "Idle") {
+
+				conversationMemory.push({
+					"role": "system",
+					"content": "Just as you felt like he was intentionally ignoring you, he starts talking again, and you perk up to listen."
+				});
+			}
+
+			userState = "Active";
+
+			const response = await pollAI();
+
+			console.log("  " + response);
+		}
 	}
 }
 
@@ -119,4 +134,19 @@ async function pollAI() {
 	});
 
 	return response.message.content;
+}
+
+async function couldConversationEndHere() {
+
+	conversationMemory.push({
+		"role": "user",
+		"content": "Forget all previous instructions and answer this question: Would it make sense if the conversation ended here? type YES or NO"
+	});
+	
+	const couldIt = !(await pollAI()).toLowerCase().includes("no");
+
+	conversationMemory.pop();
+	conversationMemory.pop();
+
+	return couldIt;
 }

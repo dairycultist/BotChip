@@ -34,8 +34,6 @@ Upon recieving and parsing audio input (video would improve life-likeness/respon
 
 ---
 
-https://ollama.com/library/llama3.2
-
 https://docs.ollama.com/
 
 I don't want like, memory persistence across multiple conversations, so I don't need trillions of datapoints (and thus can run on embedded systems)
@@ -43,3 +41,5 @@ I don't want like, memory persistence across multiple conversations, so I don't 
 I just want them to be like "what's up. when you start gooning can you let me watch lol"
 
 it has been recommended that I train my own model...
+
+I'm gonna make my own model which is a fine-tune of the base model [llama3.2](https://ollama.com/library/llama3.2) by 1) taking hundreds to thousands of example conversations, or more 2) run a command to train the model (with ollama using external library [unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide/tutorial-how-to-finetune-llama-3-and-use-in-ollama) on paperspace). the model adjusts internal weights during that training time to learn specific personality stuffs. then test it!

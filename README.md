@@ -2,13 +2,7 @@
 
 Goal: Open source, explicitly non-anthropomorphic wifebot software + hardware spec.
 
-(since I just want Connection and Booba without having to ignore all the undesirable features of a human and their desires)
-
-https://www.youtube.com/shorts/VLrRbZY5q3w
-
-camera https://www.adafruit.com/product/5841
-
-screen https://tronixstuff.com/2019/10/15/a-tiny-tiny-0-49-64-x-32-graphic-i2c-oled-display-with-arduino/
+(since I just want 1. connection-on-demand and 2. booba, without having to ignore all the undesirable features of a human and their desires)
 
 1. emulate the high-level logic
 2. emulate the low-level logic (i.e. implementation on specific hardware, such as with this [arduino emulator](https://wokwi.com/arduino))

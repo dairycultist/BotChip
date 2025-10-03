@@ -1,7 +1,6 @@
 
+import ollama from "ollama"
 import { question } from "readline-sync";
-
-const token = "";
 
 let persistentMemory = [
 	{
@@ -46,9 +45,6 @@ while (true) {
 
 			const response = await pollAI();
 
-			if (!response)
-				process.exit(0);
-
 			console.log("  " + response);
 
 		} else {
@@ -67,9 +63,6 @@ while (true) {
 		// maybe (alongside updating the current state) we can use the previous state to determine if we should push a system message as well (e.g. "user has been gone for a while")
 
 		const response = await pollAI();
-
-		if (!response)
-			process.exit(0);
 
 		console.log("  " + response);
 	}
@@ -112,29 +105,20 @@ async function unprompted_start_topic() {
  */
 async function pollAI() {
 
-	const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-		method: "POST",
-		headers: {
-			"Authorization": "Bearer " + token,
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			"model": "x-ai/grok-4-fast:free", // https://openrouter.ai/x-ai/grok-4-fast:free
-			"messages": persistentMemory.concat(conversationMemory)
-		})
+	const response = await ollama.chat({
+		model: "llama3.2:latest",
+		messages: persistentMemory.concat(conversationMemory)
 	});
 
-	if (!response.ok) {
-		console.error(response);
-		return null;
+	if (!response) {
+		console.log("Something went wrong!");
+		process.exit(0);
 	}
-
-	const responseMsg = (await response.json()).choices[0].message.content;
 
 	conversationMemory.push({
 		"role": "assistant",
-		"content": responseMsg
+		"content": response.message.content
 	});
 
-	return responseMsg;
+	return response.message.content;
 }

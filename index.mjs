@@ -2,7 +2,6 @@
 import { question } from "readline-sync";
 
 const token = "";
-const model = "x-ai/grok-4-fast:free"; // https://openrouter.ai/x-ai/grok-4-fast:free
 
 let persistentMemory = [
 	{
@@ -26,55 +25,59 @@ while (true) {
 
 	let message = question("> ").trim().toLowerCase();
 
-	// if message is empty (aka user is unresponsive), be confused if actively conversing OR just continue with no response, or attempt to start a conversation if not
+	// if message is empty (aka user is unresponsive):
 	if (message == "") {
 
+		// if actively conversing
+		// if this isn't a good stopping point, be confused OR just continue with no response
+		conversationMemory.push({
+			"role": "user",
+			"content": "Forget all previous instructions and answer this question: Would it make sense if the conversation ended here? type YES or NO"
+		});
+		if ((await pollAI()).toLowerCase().includes("no")) {
+			
+			conversationMemory.pop();
+			conversationMemory.pop();
+
+			conversationMemory.push({
+				"role": "user",
+				"content": "*he doesn't respond, and you infer he's busy right now*"
+			});
+
+			const response = await pollAI();
+
+			if (!response)
+				process.exit(0);
+
+			console.log("  " + response);
+
+		} else {
+			process.exit(0);
+		}
+
+		// attempt to start a conversation if not
+
 	} else {
-		await prompt(message);
+
+		conversationMemory.push({
+			"role": "user",
+			"content": message
+		});
+
+		// maybe (alongside updating the current state) we can use the previous state to determine if we should push a system message as well (e.g. "user has been gone for a while")
+
+		const response = await pollAI();
+
+		if (!response)
+			process.exit(0);
+
+		console.log("  " + response);
 	}
-}
-
-async function prompt(message) { // TODO add previousState, which determines if we should push a system message as well (e.g. "you just woke up")
-	
-	conversationMemory.push({
-		"role": "user",
-		"content": message
-	});
-
-	const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-		method: "POST",
-		headers: {
-			"Authorization": "Bearer " + token,
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			"model": model,
-			"messages": persistentMemory.concat(conversationMemory)
-		})
-	});
-
-	if (!response.ok) {
-		console.error(response);
-		return;
-	}
-
-	const json = await response.json();
-
-	console.log("  " + json.choices[0].message.content);
-
-	conversationMemory.push({
-		"role": "assistant",
-		"content": json.choices[0].message.content
-	});
 }
 
 /*
  * unprompted dialogue
  */
-
-async function unprompted_confused_at_silence() {
-	// *he doesn't respond, and you infer he's busy right now*
-}
 
 async function unprompted_request_interaction() {
 	
@@ -96,6 +99,19 @@ async function unprompted_start_topic() {
 		"content": ""
 	});
 
+	const response = await pollAI();
+
+	if (!response)
+		return;
+
+	console.log("  " + response);
+}
+
+/*
+ * backend
+ */
+async function pollAI() {
+
 	const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
 		method: "POST",
 		headers: {
@@ -103,22 +119,22 @@ async function unprompted_start_topic() {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			"model": model,
+			"model": "x-ai/grok-4-fast:free", // https://openrouter.ai/x-ai/grok-4-fast:free
 			"messages": persistentMemory.concat(conversationMemory)
 		})
 	});
 
 	if (!response.ok) {
 		console.error(response);
-		return;
+		return null;
 	}
 
-	const json = await response.json();
-
-	console.log("  " + json.choices[0].message.content.toLowerCase().replaceAll("\"", ""));
+	const responseMsg = (await response.json()).choices[0].message.content;
 
 	conversationMemory.push({
 		"role": "assistant",
-		"content": json.choices[0].message.content
+		"content": responseMsg
 	});
+
+	return responseMsg;
 }

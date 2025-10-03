@@ -2,70 +2,43 @@
 import ollama from "ollama"
 import { question } from "readline-sync";
 
-let persistentMemory = [
+let inventory = [ // use() returns null if it does nothing, or a string containing the prompt to give the AI narrator if it does do something
 	{
-		"role": "system",
-		"content":
-			`You are describing a homebrew medieval fantasy world. In this world, extreme obesity grants women
-			magical abilities at the expense of physical ability (priestesses can often barely walk, but they
-			aren't sick, just tired, and they eat very energetically and happily). Magical
-			abilities are rather weak, allowing for only simple spells. Men cannot use magic. Speak briefly.
-			Keep descriptions short.`
-			.replaceAll("\n", " ").replaceAll("\t", "")
+		name: "Shortsword",
+		oneUse: false,
+		use: () => {
+			return null;
+		},
+		useResult: () => ""
 	},
 	{
-		"role": "system",
-		"content":
-			`The user, who is a male adventurer, has a travelling party that consists of:
-			- Solara, a severely obese and shy elven priestess.
-			Solara knows these spells:
-			- A healing spell which reverses minor wounds`
-			.replaceAll("\n", " ").replaceAll("\t", "")
+		name: "Pack of rations",
+		oneUse: true,
+		use: () => {
+			return "The user uses a pack of rations to feed their party member, Solara.";
+		},
+		useResult: () => "Solara regains 4 HP and gains 10lbs!"
 	}
 ];
 
-let inventory = [
-	{ name: "Shortsword", oneUse: false },
-	{ name: "Pack of rations", oneUse: true },
-	{ name: "Pack of rations", oneUse: true },
-	{ name: "Pack of rations", oneUse: true }
-];
+let location = "sitting around a round table in the common area of the inn";
 
-// should add money system, silver coins
+let money = 20; // silver coins
 
-let sessionMemory = [
-	{
-		"role": "assistant",
-		"content":
-			`You've woken up after a long night's rest in an inn in a small village nestled within a grassy valley.
+// TODO maintain an internal state ; AI is only for narrative, which doesn't take in a huge dialogue but just information about the current state
+
+console.log(`\x1b[33mYou've woken up after a long night's rest in an inn in a small village nestled within a grassy valley.
 			Currently, you and your party member Solara sit around a round table in the common area of the inn.
-			She seems anxious to get going.`
-			.replaceAll("\n", " ").replaceAll("\t", "")
-	}
-];
-
-console.log("\n\x1b[33m" + sessionMemory[0].content + "\x1b[0m\n");
+			She seems anxious to get going.\x1b[0m`.replaceAll("\n", " ").replaceAll("\t", ""));
 
 while (true) {
 
-	let input = question("1. speak\n2. use\n> ").trim().toLowerCase();
+	let input = question("1. use\n2. go to\n> ").trim().toLowerCase();
 	console.log("\n");
 
 	switch (input) {
-
-		case "1":
-		case "speak":
-
-			input = question("What do you say? > ").trim().toLowerCase();
-			console.log("\n");
-
-			if (input != "") {
-
-				await asyncPromptAI("The user says: " + input);
-			}
-			break;
 		
-		case "2":
+		case "1":
 		case "use":
 
 			for (const i in inventory) {
@@ -81,15 +54,19 @@ while (true) {
 
 				index--;
 
-				input = question("Use a " + inventory[index].name.toLowerCase() + " in order to...? > ").trim().toLowerCase();
-				console.log("\n");
+				const prompt = inventory[index].use();
 
-				await asyncPromptAI("The user uses a " + inventory[index].name.toLowerCase() + " to: " + input);
+				if (prompt != null) {
 
-				if (inventory[index].oneUse) {
+					await asyncPromptAI(prompt);
 
-					console.log("\n\x1b[33m" + "The " + inventory[index].name.toLowerCase() + " was used up!" + "\x1b[0m\n");
-					inventory.splice(index, 1);
+					console.log(inventory[index].useResult());
+
+					if (inventory[index].oneUse) {
+
+						console.log("The " + inventory[index].name.toLowerCase() + " was used up!");
+						inventory.splice(index, 1);
+					}
 				}
 			}
 			break;
@@ -102,25 +79,41 @@ while (true) {
  */
 async function asyncPromptAI(userPrompt) {
 
-	sessionMemory.push({
-		"role": "user",
-		"content": userPrompt
-	});
+	let messages = [
+		{
+			"role": "system",
+			"content":
+				`You are describing a homebrew medieval fantasy world. In this world, extreme obesity grants women
+				magical abilities at the expense of physical ability (priestesses can often barely walk, but they
+				aren't sick, just tired, and they always find the energy to eat and get fatter). Magical
+				abilities are rather weak, allowing for only simple spells. Men cannot use magic. Speak briefly.
+				Keep descriptions short. Do only what the user tells you to do.
+
+				The user is a male adventurer. They travel with Solara, a severely obese and shy elven priestess.
+				There are no other named characters.
+
+				Solara knows these spells:
+				- A healing spell which reverses minor wounds.
+
+				The party is currently at: ${ location }
+
+				`.replaceAll("\t", "")
+		},
+		{
+			"role": "user",
+			"content": userPrompt
+		}
+	];
 
 	const response = await ollama.chat({
 		model: "llama3.2:latest",
-		messages: persistentMemory.concat(sessionMemory)
+		messages: messages
 	});
 
 	if (!response) {
 		console.log("Something went wrong!");
 		process.exit(0);
 	}
-
-	sessionMemory.push({
-		"role": "assistant",
-		"content": response.message.content
-	});
 
 	console.log("\n\x1b[33m" + response.message.content + "\x1b[0m\n");
 }

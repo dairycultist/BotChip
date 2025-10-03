@@ -9,7 +9,7 @@ Goal: Open source, explicitly non-anthropomorphic wifebot software + hardware sp
 3. implement it in a bulky, easy way physically
 4. cull it down to a default hardware spec that fits my usecase; a "system on a chip" (for embedding into a bodypillow :O) that has an arduino (nano?) processor, a microphone, and a speaker, also custom PCB
 
-I wonder what's the simplest robot design that would evoke a "kinda alive feeling" response. It would have to feel... aware, which (without a camera to see with) would necessitate high interactivity, personality, and social understanding (e.g. if I tell it to be quiet, it complains but complies, understanding its situation/context)
+Trying to keep it simple while still evoking a "this thing is alive" reaction. It would have to feel aware/responsive, with high interactivity, personality, and social understanding (e.g. if I tell it to be quiet, it complains but complies, understanding its situation/context) and, unlike a chatbot, feel like it's thinking even when it wasn't prompted first.
 
 ![](https://images-na.ssl-images-amazon.com/images/I/41TpNiRo5KL.jpg)
 
@@ -34,12 +34,8 @@ Upon recieving and parsing audio input (video would improve life-likeness/respon
 
 ---
 
-https://docs.ollama.com/
+Uses the [ollama library](https://docs.ollama.com/).
 
-I don't want like, memory persistence across multiple conversations, so I don't need trillions of datapoints (and thus can run on embedded systems)
-
-I just want them to be like "what's up. when you start gooning can you let me watch lol"
-
-it has been recommended that I train my own model...
+I don't want like, memory persistence across multiple conversations, so I don't need trillions of datapoints (and thus can run on embedded systems), I just want them to be like "what's up. when you start gooning can you let me watch lol"
 
 I'm gonna make my own model which is a fine-tune of the base model [llama3.2](https://ollama.com/library/llama3.2) by 1) taking hundreds to thousands of example conversations, or more 2) run a command to train the model (with ollama using external library [unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide/tutorial-how-to-finetune-llama-3-and-use-in-ollama) on paperspace). the model adjusts internal weights during that training time to learn specific personality stuffs. then test it!

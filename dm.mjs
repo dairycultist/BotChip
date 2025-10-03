@@ -7,7 +7,8 @@ let persistentMemory = [
 		"role": "system",
 		"content":
 			`You are describing a homebrew medieval fantasy world. In this world, extreme obesity grants women
-			magical abilities at the expense of physical ability (priestesses can often barely walk). Magical
+			magical abilities at the expense of physical ability (priestesses can often barely walk, but they
+			aren't sick, just tired, and they eat very energetically and happily). Magical
 			abilities are rather weak, allowing for only simple spells. Men cannot use magic. Speak briefly.
 			Keep descriptions short.`
 			.replaceAll("\n", " ").replaceAll("\t", "")
@@ -24,10 +25,10 @@ let persistentMemory = [
 ];
 
 let inventory = [
-	"A shortsword",
-	"A pack of rations",
-	"A pack of rations",
-	"A pack of rations"
+	{ name: "Shortsword", oneUse: false },
+	{ name: "Pack of rations", oneUse: true },
+	{ name: "Pack of rations", oneUse: true },
+	{ name: "Pack of rations", oneUse: true }
 ];
 
 // should add money system, silver coins
@@ -47,33 +48,50 @@ console.log("\n\x1b[33m" + sessionMemory[0].content + "\x1b[0m\n");
 
 while (true) {
 
-	let message;
+	let input = question("1. speak\n2. use\n> ").trim().toLowerCase();
+	console.log("\n");
 
-	switch (question("1. speak\n2. use\n").trim().toLowerCase()) {
+	switch (input) {
 
 		case "1":
 		case "speak":
 
-			message = question("What do you say? ").trim().toLowerCase();
+			input = question("What do you say? > ").trim().toLowerCase();
+			console.log("\n");
 
-			if (message != "") {
+			if (input != "") {
 
-				sessionMemory.push({
-					"role": "user",
-					"content": "The user says: " + message
-				});
-
-				console.log("\n\x1b[33m" + await pollAI() + "\x1b[0m\n");
+				await asyncPromptAI("The user says: " + input);
 			}
 			break;
 		
 		case "2":
 		case "use":
 
-			// use what?
-			// use _ in order to...
+			for (const i in inventory) {
+				console.log((Number(i) + 1) + ". " + inventory[i].name);
+			}
 
-			// "The user uses _ to: "
+			input = question("Use which (index)? > ").trim().toLowerCase();
+			console.log("\n");
+
+			let index = Number(input);
+
+			if (index != NaN && index >= 1 && index <= inventory.length) {
+
+				index--;
+
+				input = question("Use a " + inventory[index].name.toLowerCase() + " in order to...? > ").trim().toLowerCase();
+				console.log("\n");
+
+				await asyncPromptAI("The user uses a " + inventory[index].name.toLowerCase() + " to: " + input);
+
+				if (inventory[index].oneUse) {
+
+					console.log("\n\x1b[33m" + "The " + inventory[index].name.toLowerCase() + " was used up!" + "\x1b[0m\n");
+					inventory.splice(index, 1);
+				}
+			}
 			break;
 		
 	}
@@ -82,7 +100,12 @@ while (true) {
 /*
  * backend
  */
-async function pollAI() {
+async function asyncPromptAI(userPrompt) {
+
+	sessionMemory.push({
+		"role": "user",
+		"content": userPrompt
+	});
 
 	const response = await ollama.chat({
 		model: "llama3.2:latest",
@@ -99,5 +122,5 @@ async function pollAI() {
 		"content": response.message.content
 	});
 
-	return response.message.content;
+	console.log("\n\x1b[33m" + response.message.content + "\x1b[0m\n");
 }

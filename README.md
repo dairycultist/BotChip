@@ -15,14 +15,13 @@ I wonder what's the simplest robot design that would evoke a "kinda alive feelin
 
 ---
 
-User-state machine to keep track of what the user is doing (and thus, how to act). Updated through input. Examples of states include:
+State machine that maintains what the user is doing (and thus, how to act). Updated through input. Examples of states include:
 
-- Absent (don't bother trying to make unprompted dialogue)
-- Actively chatting (gets confused when radio-silent for a long time in this state, "you still there?")
-- Not chatting (may make unprompted dialogue in attempts to start a conversation or otherwise request interaction, boredom, may talk to themself)
-- Do not disturb (doesn't attempt to make unprompted dialogue)
+- Active (currently chatting; bot gets confused when radio-silent for a long time in this state, "you still there?")
+- Idle (not currently chatting; bot may make unprompted dialogue in attempts to start a conversation or otherwise request interaction, boredom, may talk to themself)
+- Away/DND (bot doesn't attempt to make unprompted dialogue, entered when told to stop bothering, when their attempts to chat go unanswered, or when told that the user is leaving)
 
-Upon recieving and parsing audio input (video would improve life-likeness/responsiveness by reacting to non-verbal input, but is out of scope), BotChip performs **request prediction** (entirely algorithmic, no AI) to determine 1) if it constitutes an interrupt and 2) if it is, how to respond. Responses also take as input the point in its behaviour tree it recieved the interrupt in.
+Upon recieving and parsing audio input (video would improve life-likeness/responsiveness by reacting to non-verbal input, but is out of scope), BotChip performs **request prediction** (entirely algorithmic, no AI) to determine 1) if it necessitates a response and 2) if it is, how to respond. Responses also take as input the point in its behaviour tree it recieved the interrupt in.
 
 - If it seems like the audio isn't addressing BotChip (or otherwise doesn't require a response, such as a "that's true"), it does nothing.
 - If the request is simple, a response may be **rote** and thus retrievable from a predetermined response list for that request type (for example, responding to "hi" doesn't require an entire AI poll, just respond "hey").

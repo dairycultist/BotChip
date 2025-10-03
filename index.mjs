@@ -20,31 +20,22 @@ let conversationMemory = [
 
 while (true) {
 
-	await voice_interrupt(question("[message] "));
+	let message = question("[message] ").trim().toLowerCase();
+
+	// if message is empty (aka user is unresponsive), be confused if actively conversing, or attempt to start a conversation if not
+	if (message == "") {
+
+	} else {
+		await prompt(message);
+	}
 }
 
-async function voice_interrupt(message) { // TODO add previousState, which determines if we should push a system message as well (e.g. "you just woke up")
-
-	message = message.trim().toLowerCase();
-
-	// if this is just a "yeah" responding to a previous utterance, we can:
-	if ((message == "yeah" || message == "yea")) {
-
-		if (Math.random() > 0.5) {
-			return; // do nothing
-		} else if (Math.random() > 0.5) {
-			return start_topic(); // start a new conversation
-		}
-		// continue the current conversation
-	}
-
-	if (message != "") {
-		
-		conversationMemory.push({
-			"role": "user",
-			"content": message
-		});
-	}
+async function prompt(message) { // TODO add previousState, which determines if we should push a system message as well (e.g. "you just woke up")
+	
+	conversationMemory.push({
+		"role": "user",
+		"content": message
+	});
 
 	const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
 		method: "POST",
@@ -77,15 +68,15 @@ async function voice_interrupt(message) { // TODO add previousState, which deter
  * unprompted dialogue
  */
 
-async function confused_at_silence() {
-
+async function unprompted_confused_at_silence() {
+	// *he doesn't respond, and you infer he's busy right now*
 }
 
-async function request_interaction() {
+async function unprompted_request_interaction() {
 	
 }
 
-async function start_topic() {
+async function unprompted_start_topic() {
 
 	conversationMemory = [];
 

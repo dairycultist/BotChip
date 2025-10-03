@@ -37,3 +37,9 @@ Upon recieving and parsing audio input (video would improve life-likeness/respon
 https://ollama.com/library/llama3.2
 
 https://docs.ollama.com/
+
+I don't want like, memory persistence across multiple conversations, so I don't need trillions of datapoints (and thus can run on embedded systems)
+
+I just want them to be like "what's up. when you start gooning can you let me watch lol"
+
+it has been recommended that I train my own model...

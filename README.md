@@ -17,9 +17,14 @@ I wonder what's the simplest robot design that would evoke a "kinda alive feelin
 
 State machine that maintains what the user is doing (and thus, how to act). Updated through input. Examples of states include:
 
-- Active (currently chatting; bot gets confused when radio-silent for a long time in this state, "you still there?")
-- Idle (not currently chatting; bot may make unprompted dialogue in attempts to start a conversation or otherwise request interaction, boredom, may talk to themself)
-- Away/DND (bot doesn't attempt to make unprompted dialogue, entered when told to stop bothering, when their attempts to chat go unanswered, or when told that the user is leaving)
+- Active (currently chatting)
+  - Bot gets confused when radio-silent for a long time in this state, "you still there?"
+- Idle (not currently chatting)
+  - Switched to when the bot detects that an active conversation has ended.
+  - Bot may make unprompted dialogue in attempts to start a conversation or otherwise request interaction, exhibit boredom, or talk to themself.
+- Away/DND (chatting blocked)
+  - Switched to when 1) told to stop bothering, 2) when their attempts to chat go unanswered, or 3) when told that the user is leaving.
+  - Bot doesn't attempt to make unprompted dialogue.
 
 Upon recieving and parsing audio input (video would improve life-likeness/responsiveness by reacting to non-verbal input, but is out of scope), BotChip performs **request prediction** (entirely algorithmic, no AI) to determine 1) if it necessitates a response and 2) if it is, how to respond. Responses also take as input the point in its behaviour tree it recieved the interrupt in.
 

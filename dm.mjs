@@ -18,7 +18,15 @@ let inventory = [ // use() returns null if it does nothing, or a string containi
 			return "The user uses a pack of rations to feed their party member, Solara.";
 		},
 		useResult: () => "Solara regains 4 HP and gains 10lbs!"
-	}
+	},
+	{
+		name: "Minor healing spell",
+		oneUse: false,
+		use: () => {
+			return "Solara uses a healing spell which reverses minor wounds on the user.";;
+		},
+		useResult: () => "You regain 4 HP!"
+	},
 ];
 
 let location = "sitting around a round table in the common area of the inn";
@@ -87,13 +95,12 @@ async function asyncPromptAI(userPrompt) {
 				magical abilities at the expense of physical ability (priestesses can often barely walk, but they
 				aren't sick, just tired, and they always find the energy to eat and get fatter). Magical
 				abilities are rather weak, allowing for only simple spells. Men cannot use magic. Speak briefly.
-				Keep descriptions short. Do only what the user tells you to do.
+				Keep descriptions short.
+				
+				Do only what the user tells you to do.
 
 				The user is a male adventurer. They travel with Solara, a severely obese and shy elven priestess.
 				There are no other named characters.
-
-				Solara knows these spells:
-				- A healing spell which reverses minor wounds.
 
 				The party is currently at: ${ location }
 

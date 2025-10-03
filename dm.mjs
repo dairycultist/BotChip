@@ -6,8 +6,15 @@ let persistentMemory = [
 	{
 		"role": "system",
 		"content":
-			`You are a dungeon master. You are describing a homebrew medieval fantasy world. In this world, obesity grants women magical abilities at the expense of physical ability.
-			Men cannot use magic. Speak briefly. Keep descriptions short. Ask vaguely what the user would like to do.`
+			`You are describing a homebrew medieval fantasy world. In this world, obesity grants women magical
+			abilities at the expense of physical ability. Men cannot use magic. Speak briefly. Keep descriptions short.`
+			.replaceAll("\n", " ").replaceAll("\t", "")
+	},
+	{
+		"role": "assistant",
+		"content":
+			`The user, who is a male adventurer, has a travelling party that consists of:
+			- Solara, a severely obese and shy elven priestess.`
 			.replaceAll("\n", " ").replaceAll("\t", "")
 	}
 ];
@@ -16,15 +23,14 @@ let sessionMemory = [
 	{
 		"role": "assistant",
 		"content":
-			`You are a male adventurer, whose travelling party consists of the severely obese and shy elven priestess Sina,
-			and the mischievous kitsune swordswoman with huge breasts and wide hips, Mona. You've woken up after a long night's rest in
-			an inn in a small village nestled within a grassy valley. Currently, you sit around a round table in the common
-			area of the inn. What do you do?`
+			`You've woken up after a long night's rest in an inn in a small village nestled within a grassy valley.
+			Currently, you and your party member Solara sit around a round table in the common area of the inn.
+			She seems anxious to get going. What do you do?`
 			.replaceAll("\n", " ").replaceAll("\t", "")
 	}
 ];
 
-console.log("  " + sessionMemory[0].content);
+console.log("\x1b[0m" + sessionMemory[0].content);
 
 while (true) {
 
@@ -43,7 +49,7 @@ while (true) {
 			"content": message
 		});
 
-		console.log("\n" + await pollAI() + "\n");
+		console.log(await pollAI());
 	}
 }
 

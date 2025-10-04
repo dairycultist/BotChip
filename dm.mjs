@@ -83,7 +83,7 @@ const SHORT_SWORD = new Action("Shortsword", () => null);
 const PACK_OF_RATIONS = new Action("Pack of rations", () => {
 		
 	return new UseResult(
-		"The user uses a pack of rations to feed their party member, Solara.",
+		"I use a pack of rations to feed my party member, Solara.",
 		"Solara regains 4 HP and gains 10lbs!",
 		true
 	);
@@ -101,7 +101,7 @@ const MINOR_HEALING_SPELL = new Action("Minor healing spell", () => {
 		);
 	} else if (input == "2") {
 		return new UseResult(
-			"Solara uses a healing spell which reverses minor wounds on the user.",
+			"Solara uses a healing spell which reverses minor wounds on me.",
 			"You regain 4 HP!",
 			false
 		);
@@ -130,14 +130,14 @@ const INN = new Location("Inn", "sitting around a round table in the common area
 			money -= 10;
 
 			return new DoResult(
-				"The user rents a room from the innkeeper. That night, Solara and the user have an intimate moment.",
+				"I rent a room from the innkeeper. That night, Solara and I have an intimate moment.", // TODO just make it pick a random party member
 				"All party member's HP/MP restored to full, -10 silver coins"
 			);
 
 		} else {
 
 			return new DoResult(
-				"The user attempts to rent a room from the innkeeper, but they don't have enough silver coins and are turned away without resistance.",
+				"I attempt to rent a room from the innkeeper, but I don't have enough silver coins and am turned away without resistance.",
 				"Sorry Link, I can't give credit. Come back when you're a little, mmmm... richer!"
 			);
 		}
@@ -150,14 +150,14 @@ const INN = new Location("Inn", "sitting around a round table in the common area
 			money -= 5;
 
 			return new DoResult(
-				"The user buys a pack of rations from the innkeeper for 5 silver coins, which Solara is eager to stow away in her pack for later.",
+				"I buy a pack of rations from the innkeeper for 5 silver coins, which Solara is eager to stow away in her pack for later.",
 				"+1 pack of rations, -5 silver coins"
 			);
 
 		} else {
 
 			return new DoResult(
-				"The user attempts to buy a pack of rations from the innkeeper, but they don't have enough silver coins and are turned away without resistance.",
+				"I attempt to buy a pack of rations from the innkeeper, but I don't have enough silver coins and am turned away without resistance.",
 				"Sorry Link, I can't give credit. Come back when you're a little, mmmm... richer!"
 			);
 		}
@@ -177,8 +177,9 @@ const INN = new Location("Inn", "sitting around a round table in the common area
  * maintain the internal game state
  */
 
-// idk if I should genericize the party, or have it just be Solara, since the former makes writing character behaviours into prompts a nightmare
-// (unless I can just include every character's personality alongside the prompt, and hope the AI makes good characterization?)
+// TODO genericize party logic
+// (I can just include every character's personality alongside the prompt, and hope the AI makes good characterization,
+// + if something needs a specific character to do something just pick a random one or smth)
 
 let inventory = [ SHORT_SWORD, MINOR_HEALING_SPELL ];
 
@@ -201,16 +202,19 @@ while (true) {
 
 	switch (smartQuestion("1. use\n2. do\n3. info\n> ")) {
 		
+		// actions involving items/spells in the inventory, which can be performed anywhere
 		case "1":
 		case "use":
 			await actionUse();
 			break;
 
+		// location-specific actions (e.g. shopping in towns, changing locations, entering battles which are technically just a type of location)
 		case "2":
 		case "do":
 			await actionDo();
 			break;
 
+		// see inventory, party information, current location
 		case "3":
 		case "info":
 			await actionInfo();
@@ -229,7 +233,6 @@ async function actionUse() {
 		await inventory[index - 1].asyncUse(index - 1);
 }
 
-// location-specific actions (e.g. shopping in towns, changing locations, entering battles which are technically just a type of location)
 async function actionDo() {
 
 	for (const i in location.actions)
@@ -241,7 +244,6 @@ async function actionDo() {
 		await location.actions[index - 1].asyncDo();
 }
 
-// see inventory, party information, current location
 async function actionInfo() {
 
 	console.log("Current location: " + location.displayName + "\n");
@@ -289,10 +291,10 @@ async function asyncNarrate(situationDescription) {
 					abilities are rather weak, allowing for only simple spells. Men cannot use magic. Speak briefly.
 					Keep descriptions short.
 					
-					Do only what the user tells you to do.
+					Do only what I tell you to do.
 
-					The user is a male adventurer. They travel with:
-					- Solara, a severely obese and shy elven priestess.
+					I am a male adventurer. I travel with:
+					- Solara, a severely obese and shy elven priestess. She wears a simple white robe, cinched at the waist by a wide leather belt, and her dark hair is neatly braided under a hood that keeps it from falling loose in the breeze.
 					There are no other named characters.
 
 					The party is currently at: ${ location.prompt }

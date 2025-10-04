@@ -35,11 +35,24 @@ let inventory = [
 	{
 		name: "Minor healing spell",
 		use: () => {
-			return new UseInfo(
-				"Solara uses a healing spell which reverses minor wounds on the user.",
-				"You regain 4 HP!",
-				false
-			);
+
+			const input = smartQuestion("Use on 1:Solara or 2:yourself? > ");
+
+			if (input == "1") {
+				return new UseInfo(
+					"Solara uses a healing spell which reverses minor wounds on herself.",
+					"Solara regains 4 HP!",
+					false
+				);
+			} else if (input == "2") {
+				return new UseInfo(
+					"Solara uses a healing spell which reverses minor wounds on the user.",
+					"You regain 4 HP!",
+					false
+				);
+			} else {
+				return null;
+			}
 		}
 	},
 ];
@@ -49,7 +62,7 @@ let location = "sitting around a round table in the common area of the inn";
 let money = 20; // silver coins
 
 /*
- * game
+ * game action choice system
  */
 console.clear();
 console.log(`\x1b[33mYou've woken up after a long night's rest in an inn in a small village nestled within a grassy valley.
@@ -60,58 +73,71 @@ smartQuestion();
 
 while (true) {
 
-	let input = smartQuestion("1. use\n2. do\n3. info\n> ");
-
-	switch (input) {
+	switch (smartQuestion("1. use\n2. do\n3. info\n> ")) {
 		
 		case "1":
 		case "use":
-
-			for (const i in inventory)
-				console.log((Number(i) + 1) + ". " + inventory[i].name);
-
-			input = smartQuestion("Use which (index)? > ");
-
-			let index = Number(input);
-
-			if (index != NaN && index >= 1 && index <= inventory.length) {
-
-				index--;
-
-				const useInfo = inventory[index].use();
-
-				if (useInfo != null) {
-
-					await asyncNarrate(useInfo.prompt);
-
-					console.log(useInfo.result);
-
-					if (useInfo.usedUp) {
-
-						console.log("The " + inventory[index].name.toLowerCase() + " was used up!");
-						inventory.splice(index, 1);
-					}
-
-					smartQuestion();
-				}
-			}
+			await actionUse();
 			break;
 
-		case "2": // location-specific actions (e.g. shopping in towns, changing locations, entering battles which are technically just a type of location)
+		case "2":
 		case "do":
-			console.log("Doing isn't a feature yet lol\n");
+			await actionDo();
 			break;
 
-		case "3": // see inventory, party information
+		case "3":
 		case "info":
-
-			console.log("Items and Spells:");
-			for (const item of inventory)
-				console.log("- " + item.name);
-
-			smartQuestion();
+			await actionInfo();
 			break;
 	}
+}
+
+async function actionUse() {
+
+	for (const i in inventory)
+		console.log((Number(i) + 1) + ". " + inventory[i].name);
+
+	let index = Number(smartQuestion("Use which (index)? > "));
+
+	if (index != NaN && index >= 1 && index <= inventory.length) {
+
+		index--;
+
+		const useInfo = inventory[index].use();
+
+		if (useInfo != null) {
+
+			await asyncNarrate(useInfo.prompt);
+
+			console.log(useInfo.result);
+
+			if (useInfo.usedUp) {
+
+				console.log("The " + inventory[index].name.toLowerCase() + " was used up!");
+				inventory.splice(index, 1);
+			}
+
+			smartQuestion();
+		}
+	}
+}
+
+// location-specific actions (e.g. shopping in towns, changing locations, entering battles which are technically just a type of location)
+async function actionDo() {
+
+}
+
+// see inventory, party information
+async function actionInfo() {
+
+	console.log("Silver coins: " + money);
+	console.log();
+
+	console.log("Items and Spells:");
+	for (const item of inventory)
+		console.log("- " + item.name);
+
+	smartQuestion();
 }
 
 function smartQuestion(prompt = "\n[press enter]") {

@@ -178,6 +178,10 @@ async function actionInfo() {
 	for (const item of inventory)
 		console.log("- " + item.displayName);
 
+	console.log("\nParty member   HP      MP      Weight");
+	console.log("You            15/15   -       -");
+	console.log("Solara         10/10   5/5     300lbs");
+
 	smartQuestion();
 }
 

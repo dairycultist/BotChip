@@ -6,7 +6,7 @@ import { question } from "readline-sync";
  * maintain the internal game state
  */
 
-class UseInfo { // returning null instead of UseInfo signifies the use was cancelled
+class UseResult {
 
 	constructor(prompt, result, usedUp) {
 		this.prompt = prompt; // the prompt to give the AI narrator
@@ -15,49 +15,67 @@ class UseInfo { // returning null instead of UseInfo signifies the use was cance
 	}
 }
 
+class Usable {
+
+	constructor(displayName, use) {
+		this.displayName = displayName;
+		this.use = use; // function that defines what happens when the Usable is used, and returns a UseResult (or null to signify the use was cancelled)
+	}
+}
+
 let inventory = [
-	{
-		name: "Shortsword",
-		use: () => {
+	new Usable("Shortsword", () => null),
+	new Usable("Pack of rations", () => {
+		
+		return new UseResult(
+			"The user uses a pack of rations to feed their party member, Solara.",
+			"Solara regains 4 HP and gains 10lbs!",
+			true
+		);
+	}),
+	new Usable("Minor healing spell", () => {
+
+		const input = smartQuestion("Use on 1:Solara or 2:yourself? > ");
+
+		if (input == "1") {
+			return new UseResult(
+				"Solara uses a healing spell which reverses minor wounds on herself.",
+				"Solara regains 4 HP!",
+				false
+			);
+		} else if (input == "2") {
+			return new UseResult(
+				"Solara uses a healing spell which reverses minor wounds on the user.",
+				"You regain 4 HP!",
+				false
+			);
+		} else {
 			return null;
 		}
-	},
-	{
-		name: "Pack of rations",
-		use: () => {
-			return new UseInfo(
-				"The user uses a pack of rations to feed their party member, Solara.",
-				"Solara regains 4 HP and gains 10lbs!",
-				true
-			);
-		}
-	},
-	{
-		name: "Minor healing spell",
-		use: () => {
-
-			const input = smartQuestion("Use on 1:Solara or 2:yourself? > ");
-
-			if (input == "1") {
-				return new UseInfo(
-					"Solara uses a healing spell which reverses minor wounds on herself.",
-					"Solara regains 4 HP!",
-					false
-				);
-			} else if (input == "2") {
-				return new UseInfo(
-					"Solara uses a healing spell which reverses minor wounds on the user.",
-					"You regain 4 HP!",
-					false
-				);
-			} else {
-				return null;
-			}
-		}
-	},
+	})
 ];
 
-let location = "sitting around a round table in the common area of the inn";
+class LocationAction {
+
+	constructor(displayName, perform) {
+		this.displayName = displayName;
+		this.perform = perform; // function that defines what happens when the user decides to do this action (can change location, update state variables, etc)
+	}
+}
+
+class Location {
+
+	constructor(displayName, prompt, actions) {
+		this.displayName = displayName;
+		this.prompt = prompt; // the prompt to give the AI narrator
+		this.actions = actions; // list of LocationActions
+	}
+}
+
+let location = new Location("Inn", "sitting around a round table in the common area of the inn", [
+	new LocationAction("Do nothing", () => {}),
+	new LocationAction("Do nothing but more", () => {}),
+]);
 
 let money = 20; // silver coins
 
@@ -95,25 +113,25 @@ while (true) {
 async function actionUse() {
 
 	for (const i in inventory)
-		console.log((Number(i) + 1) + ". " + inventory[i].name);
+		console.log((Number(i) + 1) + ". " + inventory[i].displayName);
 
-	let index = Number(smartQuestion("Use which (index)? > "));
+	let index = Number(smartQuestion("\nUse which (index)? > "));
 
 	if (index != NaN && index >= 1 && index <= inventory.length) {
 
 		index--;
 
-		const useInfo = inventory[index].use();
+		const useResult = inventory[index].use();
 
-		if (useInfo != null) {
+		if (useResult != null) {
 
-			await asyncNarrate(useInfo.prompt);
+			await asyncNarrate(useResult.prompt);
 
-			console.log(useInfo.result);
+			console.log(useResult.result);
 
-			if (useInfo.usedUp) {
+			if (useResult.usedUp) {
 
-				console.log("The " + inventory[index].name.toLowerCase() + " was used up!");
+				console.log("The " + inventory[index].displayName.toLowerCase() + " was used up!");
 				inventory.splice(index, 1);
 			}
 
@@ -125,17 +143,22 @@ async function actionUse() {
 // location-specific actions (e.g. shopping in towns, changing locations, entering battles which are technically just a type of location)
 async function actionDo() {
 
+	for (const i in location.actions)
+		console.log((Number(i) + 1) + ". " + location.actions[i].displayName);
+
+	smartQuestion();
 }
 
-// see inventory, party information
+// see inventory, party information, current location
 async function actionInfo() {
 
-	console.log("Silver coins: " + money);
-	console.log();
+	console.log("Current location: " + location.displayName + "\n");
+
+	console.log("Silver coins: " + money + "\n");
 
 	console.log("Items and Spells:");
 	for (const item of inventory)
-		console.log("- " + item.name);
+		console.log("- " + item.displayName);
 
 	smartQuestion();
 }
@@ -172,7 +195,7 @@ async function asyncNarrate(situationDescription) {
 					The user is a male adventurer. They travel with Solara, a severely obese and shy elven priestess.
 					There are no other named characters.
 
-					The party is currently at: ${ location }
+					The party is currently at: ${ location.prompt }
 
 					`.replaceAll("\t", "")
 			},

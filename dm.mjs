@@ -60,16 +60,15 @@ smartQuestion();
 
 while (true) {
 
-	let input = smartQuestion("1. use\n2. go\n3. do\n> ");
+	let input = smartQuestion("1. use\n2. do\n3. info\n> ");
 
 	switch (input) {
 		
 		case "1":
 		case "use":
 
-			for (const i in inventory) {
+			for (const i in inventory)
 				console.log((Number(i) + 1) + ". " + inventory[i].name);
-			}
 
 			input = smartQuestion("Use which (index)? > ");
 
@@ -98,14 +97,19 @@ while (true) {
 			}
 			break;
 
-		case "2":
-		case "go":
-			console.log("Going isn't a feature yet lol\n");
-			break;
-
-		case "3": // scene-specific actions (e.g. shopping in towns)
+		case "2": // location-specific actions (e.g. shopping in towns, changing locations, entering battles which are technically just a type of location)
 		case "do":
 			console.log("Doing isn't a feature yet lol\n");
+			break;
+
+		case "3": // see inventory, party information
+		case "info":
+
+			console.log("Items and Spells:");
+			for (const item of inventory)
+				console.log("- " + item.name);
+
+			smartQuestion();
 			break;
 	}
 }
@@ -158,5 +162,5 @@ async function asyncNarrate(situationDescription) {
 		process.exit(0);
 	}
 
-	console.log("\n\x1b[33m" + response.message.content + "\x1b[0m\n");
+	console.log("\x1b[33m" + response.message.content + "\x1b[0m\n");
 }

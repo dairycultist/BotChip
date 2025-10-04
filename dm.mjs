@@ -3,9 +3,8 @@ import ollama from "ollama"
 import { question } from "readline-sync";
 
 /*
- * maintain the internal game state
+ * types
  */
-
 class UseResult { // inventory Actions are "used"
 
 	constructor(prompt, result, usedUp) {
@@ -17,6 +16,10 @@ class UseResult { // inventory Actions are "used"
 
 class DoResult { // location Actions are "done"
 
+	constructor(prompt, result) {
+		this.prompt = prompt; // the prompt to give the AI narrator
+		this.result = result; // a string that reports its effects after being done
+	}
 }
 
 class Action {
@@ -27,38 +30,6 @@ class Action {
 	}
 }
 
-let inventory = [
-	new Action("Shortsword", () => null),
-	new Action("Pack of rations", () => {
-		
-		return new UseResult(
-			"The user uses a pack of rations to feed their party member, Solara.",
-			"Solara regains 4 HP and gains 10lbs!",
-			true
-		);
-	}),
-	new Action("Minor healing spell", () => {
-
-		const input = smartQuestion("Use on 1:Solara or 2:yourself? > ");
-
-		if (input == "1") {
-			return new UseResult(
-				"Solara uses a healing spell which reverses minor wounds on herself.",
-				"Solara regains 4 HP!",
-				false
-			);
-		} else if (input == "2") {
-			return new UseResult(
-				"Solara uses a healing spell which reverses minor wounds on the user.",
-				"You regain 4 HP!",
-				false
-			);
-		} else {
-			return null;
-		}
-	})
-];
-
 class Location {
 
 	constructor(displayName, prompt, actions) {
@@ -68,12 +39,64 @@ class Location {
 	}
 }
 
-let location = new Location("Inn", "sitting around a round table in the common area of the inn", [
-	new Action("Do nothing", () => null),
-	new Action("Do nothing but more", () => null),
+/*
+ * singletons
+ */
+
+const SHORT_SWORD = new Action("Shortsword", () => null);
+
+const PACK_OF_RATIONS = new Action("Pack of rations", () => {
+		
+	return new UseResult(
+		"The user uses a pack of rations to feed their party member, Solara.",
+		"Solara regains 4 HP and gains 10lbs!",
+		true
+	);
+});
+
+const MINOR_HEALING_SPELL = new Action("Minor healing spell", () => {
+
+	const input = smartQuestion("Use on 1:Solara or 2:yourself? > ");
+
+	if (input == "1") {
+		return new UseResult(
+			"Solara uses a healing spell which reverses minor wounds on herself.",
+			"Solara regains 4 HP!",
+			false
+		);
+	} else if (input == "2") {
+		return new UseResult(
+			"Solara uses a healing spell which reverses minor wounds on the user.",
+			"You regain 4 HP!",
+			false
+		);
+	} else {
+		return null;
+	}
+});
+
+const INN = new Location("Inn", "sitting around a round table in the common area of the inn", [
+	new Action("Buy from shop", () => {
+
+		inventory.push(PACK_OF_RATIONS);
+		money -= 5;
+
+		return new DoResult(
+			"The user buys a pack of rations for 5 silver pieces, which Solara is eager to stow away in her pack for later.",
+			"+1 pack of rations, -5 silver pieces"
+		);
+	})
 ]);
 
-let money = 20; // silver coins
+/*
+ * maintain the internal game state
+ */
+
+let inventory = [ SHORT_SWORD, PACK_OF_RATIONS, PACK_OF_RATIONS, PACK_OF_RATIONS, MINOR_HEALING_SPELL ];
+
+let location = INN;
+
+let money = 20;
 
 /*
  * game action choice system
@@ -144,25 +167,19 @@ async function actionDo() {
 
 	let index = Number(smartQuestion("\nDo which (index)? > "));
 
-	if (index != NaN && index >= 1 && index <= location.actions) {
+	if (index != NaN && index >= 1 && index <= location.actions.length) {
 
 		index--;
 
-		const doResult = inventory[index].perform();
+		const doResult = location.actions[index].perform();
 
 		if (doResult != null) {
 
-			// await asyncNarrate(useResult.prompt);
+			await asyncNarrate(doResult.prompt);
 
-			// console.log(useResult.result);
+			console.log(doResult.result);
 
-			// if (useResult.usedUp) {
-
-			// 	console.log("The " + inventory[index].displayName.toLowerCase() + " was used up!");
-			// 	inventory.splice(index, 1);
-			// }
-
-			// smartQuestion();
+			smartQuestion();
 		}
 	}
 }

@@ -6,7 +6,7 @@ import { question } from "readline-sync";
  * types
  */
 
-class UseResult { // inventory Actions are "used"
+class UseResult {
 
 	constructor(prompt, result, usedUp) {
 		this.prompt = prompt; // the prompt to give the AI narrator
@@ -15,7 +15,7 @@ class UseResult { // inventory Actions are "used"
 	}
 }
 
-class DoResult { // location Actions are "done"
+class DoResult {
 
 	constructor(prompt, result) {
 		this.prompt = prompt;
@@ -25,9 +25,43 @@ class DoResult { // location Actions are "done"
 
 class Action {
 
-	constructor(displayName, perform) {
+	constructor(displayName, onActionPerformed) {
 		this.displayName = displayName;
-		this.perform = perform; // function that defines what happens when the Action is used (i.e. state updates), and returns a UseResult/DoResult (or null to signify the action was cancelled)
+		this.onActionPerformed = onActionPerformed; // function that defines what happens when the Action is used (i.e. state updates), and returns a UseResult/DoResult (or null to signify the action was cancelled)
+	}
+
+	async asyncUse(index) { // inventory Actions are "used"
+
+		const useResult = this.onActionPerformed();
+
+		if (useResult != null) {
+
+			await asyncNarrate(useResult.prompt);
+
+			console.log(useResult.result);
+
+			if (useResult.usedUp) {
+
+				console.log("The " + this.displayName.toLowerCase() + " was used up!");
+				inventory.splice(index, 1);
+			}
+
+			smartQuestion();
+		}
+	}
+
+	async asyncDo() { // location Actions are "done"
+
+		const doResult = this.onActionPerformed();
+
+		if (doResult != null) {
+
+			await asyncNarrate(doResult.prompt);
+
+			console.log(doResult.result);
+
+			smartQuestion();
+		}
 	}
 }
 
@@ -191,27 +225,8 @@ async function actionUse() {
 
 	let index = Number(smartQuestion("\nUse which (index)? > "));
 
-	if (index != NaN && index >= 1 && index <= inventory.length) {
-
-		index--;
-
-		const useResult = inventory[index].perform();
-
-		if (useResult != null) {
-
-			await asyncNarrate(useResult.prompt);
-
-			console.log(useResult.result);
-
-			if (useResult.usedUp) {
-
-				console.log("The " + inventory[index].displayName.toLowerCase() + " was used up!");
-				inventory.splice(index, 1);
-			}
-
-			smartQuestion();
-		}
-	}
+	if (index != NaN && index >= 1 && index <= inventory.length)
+		await inventory[index - 1].asyncUse(index - 1);
 }
 
 // location-specific actions (e.g. shopping in towns, changing locations, entering battles which are technically just a type of location)
@@ -222,21 +237,8 @@ async function actionDo() {
 
 	let index = Number(smartQuestion("\nDo which (index)? > "));
 
-	if (index != NaN && index >= 1 && index <= location.actions.length) {
-
-		index--;
-
-		const doResult = location.actions[index].perform();
-
-		if (doResult != null) {
-
-			await asyncNarrate(doResult.prompt);
-
-			console.log(doResult.result);
-
-			smartQuestion();
-		}
-	}
+	if (index != NaN && index >= 1 && index <= location.actions.length)
+		await location.actions[index - 1].asyncDo();
 }
 
 // see inventory, party information, current location

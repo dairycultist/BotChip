@@ -10,6 +10,8 @@ Trying to keep it simple while still evoking a "this thing is alive" reaction. I
 
 ![](https://images-na.ssl-images-amazon.com/images/I/41TpNiRo5KL.jpg)
 
+[![](https://preview.redd.it/wednesday-vibes-v0-1fzfw17lanwe1.jpeg?width=1080&crop=smart&auto=webp&s=64d873e3b5ae63a3295194ab5e993d812b2cb550)](https://sketchfab.com/3d-models/base-mesh-woman-5a958554686b4f539cefbe12cea48e13)
+
 ---
 
 State machine that maintains what the user is doing (and thus, how to act). Updated through input. Examples of states include:

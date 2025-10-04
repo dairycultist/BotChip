@@ -3,11 +3,10 @@ import ollama from "ollama"
 import { question } from "readline-sync";
 
 /*
- * maintain an internal state (AI is only for narrative, which doesn't take in a huge dialogue but just information about
- * the current state, and doesn't determine what happens, just makes it sound pretty)
+ * maintain the internal game state
  */
 
-class UseInfo {
+class UseInfo { // returning null instead of UseInfo signifies the use was cancelled
 
 	constructor(prompt, result, usedUp) {
 		this.prompt = prompt; // the prompt to give the AI narrator
@@ -20,7 +19,7 @@ let inventory = [
 	{
 		name: "Shortsword",
 		use: () => {
-			return null; // use was cancelled
+			return null;
 		}
 	},
 	{
@@ -52,14 +51,16 @@ let money = 20; // silver coins
 /*
  * game
  */
+console.clear();
 console.log(`\x1b[33mYou've woken up after a long night's rest in an inn in a small village nestled within a grassy valley.
 			Currently, you and your party member Solara sit around a round table in the common area of the inn.
 			She seems anxious to get going.\x1b[0m`.replaceAll("\n", " ").replaceAll("\t", ""));
 
+smartQuestion();
+
 while (true) {
 
-	let input = question("1. use\n2. go to\n> ").trim().toLowerCase();
-	console.log("\n");
+	let input = smartQuestion("1. use\n2. go\n3. do\n> ");
 
 	switch (input) {
 		
@@ -70,8 +71,7 @@ while (true) {
 				console.log((Number(i) + 1) + ". " + inventory[i].name);
 			}
 
-			input = question("Use which (index)? > ").trim().toLowerCase();
-			console.log("\n");
+			input = smartQuestion("Use which (index)? > ");
 
 			let index = Number(input);
 
@@ -83,7 +83,7 @@ while (true) {
 
 				if (useInfo != null) {
 
-					await asyncPromptAI(useInfo.prompt);
+					await asyncNarrate(useInfo.prompt);
 
 					console.log(useInfo.result);
 
@@ -92,7 +92,8 @@ while (true) {
 						console.log("The " + inventory[index].name.toLowerCase() + " was used up!");
 						inventory.splice(index, 1);
 					}
-					console.log();
+
+					smartQuestion();
 				}
 			}
 			break;
@@ -101,13 +102,28 @@ while (true) {
 		case "go":
 			console.log("Going isn't a feature yet lol\n");
 			break;
+
+		case "3": // scene-specific actions (e.g. shopping in towns)
+		case "do":
+			console.log("Doing isn't a feature yet lol\n");
+			break;
 	}
 }
 
+function smartQuestion(prompt = "\n[press enter]") {
+
+	const input = question(prompt).trim().toLowerCase();
+
+	console.clear();
+
+	return input;
+}
+
 /*
- * backend
+ * AI backend (AI is only for narrative, which doesn't take in a huge dialogue but just information about
+ * the current state, and doesn't determine what happens, just makes it sound pretty)
  */
-async function asyncPromptAI(userPrompt) {
+async function asyncNarrate(situationDescription) {
 
 	const response = await ollama.chat({
 		model: "llama3.2:latest",
@@ -132,7 +148,7 @@ async function asyncPromptAI(userPrompt) {
 			},
 			{
 				"role": "user",
-				"content": userPrompt
+				"content": situationDescription
 			}
 		]
 	});

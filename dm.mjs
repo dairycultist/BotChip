@@ -89,6 +89,25 @@ const VILLAGE = new Location("Village", "out in the village proper, where villag
 ]);
 
 const INN = new Location("Inn", "sitting around a round table in the common area of the inn", [
+	new Action("Rest for the night (-10 silver coins, restore all HP/MP)", () => {
+
+		if (money - 10 >= 0) {
+
+			money -= 10;
+
+			return new DoResult(
+				"The user rents a room from the innkeeper. That night, Solara and the user have an intimate moment.",
+				"All party member's HP/MP restored to full, -10 silver coins"
+			);
+
+		} else {
+
+			return new DoResult(
+				"The user attempts to rent a room from the innkeeper, but they don't have enough silver coins and are turned away without resistance.",
+				"Sorry Link, I can't give credit. Come back when you're a little, mmmm... richer!"
+			);
+		}
+	}),
 	new Action("Buy pack of rations from innkeeper (-5 silver coins)", () => {
 
 		if (money - 5 >= 0) {
@@ -97,14 +116,14 @@ const INN = new Location("Inn", "sitting around a round table in the common area
 			money -= 5;
 
 			return new DoResult(
-				"The user buys a pack of rations from the innkeeper for 5 silver pieces, which Solara is eager to stow away in her pack for later.",
-				"+1 pack of rations, -5 silver pieces"
+				"The user buys a pack of rations from the innkeeper for 5 silver coins, which Solara is eager to stow away in her pack for later.",
+				"+1 pack of rations, -5 silver coins"
 			);
 
 		} else {
 
 			return new DoResult(
-				"The user attempts to buy a pack of rations from the innkeeper, but they don't have enough money and are turned away without resistance.",
+				"The user attempts to buy a pack of rations from the innkeeper, but they don't have enough silver coins and are turned away without resistance.",
 				"Sorry Link, I can't give credit. Come back when you're a little, mmmm... richer!"
 			);
 		}
@@ -123,6 +142,9 @@ const INN = new Location("Inn", "sitting around a round table in the common area
 /*
  * maintain the internal game state
  */
+
+// idk if I should genericize the party, or have it just be Solara, since the former makes writing character behaviours into prompts a nightmare
+// (unless I can just include every character's personality alongside the prompt, and hope the AI makes good characterization?)
 
 let inventory = [ SHORT_SWORD, MINOR_HEALING_SPELL ];
 
@@ -267,7 +289,8 @@ async function asyncNarrate(situationDescription) {
 					
 					Do only what the user tells you to do.
 
-					The user is a male adventurer. They travel with Solara, a severely obese and shy elven priestess.
+					The user is a male adventurer. They travel with:
+					- Solara, a severely obese and shy elven priestess.
 					There are no other named characters.
 
 					The party is currently at: ${ location.prompt }

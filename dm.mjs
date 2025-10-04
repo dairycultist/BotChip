@@ -76,15 +76,29 @@ const MINOR_HEALING_SPELL = new Action("Minor healing spell", () => {
 });
 
 const INN = new Location("Inn", "sitting around a round table in the common area of the inn", [
-	new Action("Buy from shop", () => {
+	new Action("Buy pack of rations from innkeeper (-5 silver coins)", () => {
 
-		inventory.push(PACK_OF_RATIONS);
-		money -= 5;
+		if (money - 5 >= 30) {
 
-		return new DoResult(
-			"The user buys a pack of rations for 5 silver pieces, which Solara is eager to stow away in her pack for later.",
-			"+1 pack of rations, -5 silver pieces"
-		);
+			inventory.push(PACK_OF_RATIONS);
+			money -= 5;
+
+			return new DoResult(
+				"The user buys a pack of rations from the innkeeper for 5 silver pieces, which Solara is eager to stow away in her pack for later.",
+				"+1 pack of rations, -5 silver pieces"
+			);
+
+		} else {
+
+			return new DoResult(
+				"The user attempts to buy a pack of rations from the innkeeper, but they don't have enough money and are turned away without resistance.",
+				"Sorry Link, I can't give credit. Come back when you're a little, mmmm... richer!"
+			);
+		}
+	}),
+	new Action("Go out into village", () => {
+
+		return null;
 	})
 ]);
 

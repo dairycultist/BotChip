@@ -6,7 +6,7 @@ import { question } from "readline-sync";
  * maintain the internal game state
  */
 
-class UseResult {
+class UseResult { // inventory Actions are "used"
 
 	constructor(prompt, result, usedUp) {
 		this.prompt = prompt; // the prompt to give the AI narrator
@@ -15,17 +15,21 @@ class UseResult {
 	}
 }
 
-class Usable {
+class DoResult { // location Actions are "done"
 
-	constructor(displayName, use) {
+}
+
+class Action {
+
+	constructor(displayName, perform) {
 		this.displayName = displayName;
-		this.use = use; // function that defines what happens when the Usable is used, and returns a UseResult (or null to signify the use was cancelled)
+		this.perform = perform; // function that defines what happens when the Action is used (i.e. state updates), and returns a UseResult/DoResult (or null to signify the action was cancelled)
 	}
 }
 
 let inventory = [
-	new Usable("Shortsword", () => null),
-	new Usable("Pack of rations", () => {
+	new Action("Shortsword", () => null),
+	new Action("Pack of rations", () => {
 		
 		return new UseResult(
 			"The user uses a pack of rations to feed their party member, Solara.",
@@ -33,7 +37,7 @@ let inventory = [
 			true
 		);
 	}),
-	new Usable("Minor healing spell", () => {
+	new Action("Minor healing spell", () => {
 
 		const input = smartQuestion("Use on 1:Solara or 2:yourself? > ");
 
@@ -55,26 +59,18 @@ let inventory = [
 	})
 ];
 
-class LocationAction {
-
-	constructor(displayName, perform) {
-		this.displayName = displayName;
-		this.perform = perform; // function that defines what happens when the user decides to do this action (can change location, update state variables, etc)
-	}
-}
-
 class Location {
 
 	constructor(displayName, prompt, actions) {
 		this.displayName = displayName;
 		this.prompt = prompt; // the prompt to give the AI narrator
-		this.actions = actions; // list of LocationActions
+		this.actions = actions; // list of Actions
 	}
 }
 
 let location = new Location("Inn", "sitting around a round table in the common area of the inn", [
-	new LocationAction("Do nothing", () => {}),
-	new LocationAction("Do nothing but more", () => {}),
+	new Action("Do nothing", () => null),
+	new Action("Do nothing but more", () => null),
 ]);
 
 let money = 20; // silver coins
@@ -121,7 +117,7 @@ async function actionUse() {
 
 		index--;
 
-		const useResult = inventory[index].use();
+		const useResult = inventory[index].perform();
 
 		if (useResult != null) {
 
@@ -146,7 +142,29 @@ async function actionDo() {
 	for (const i in location.actions)
 		console.log((Number(i) + 1) + ". " + location.actions[i].displayName);
 
-	smartQuestion();
+	let index = Number(smartQuestion("\nDo which (index)? > "));
+
+	if (index != NaN && index >= 1 && index <= location.actions) {
+
+		index--;
+
+		const doResult = inventory[index].perform();
+
+		if (doResult != null) {
+
+			// await asyncNarrate(useResult.prompt);
+
+			// console.log(useResult.result);
+
+			// if (useResult.usedUp) {
+
+			// 	console.log("The " + inventory[index].displayName.toLowerCase() + " was used up!");
+			// 	inventory.splice(index, 1);
+			// }
+
+			// smartQuestion();
+		}
+	}
 }
 
 // see inventory, party information, current location

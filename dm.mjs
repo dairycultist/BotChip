@@ -7,32 +7,41 @@ import { question } from "readline-sync";
  * the current state, and doesn't determine what happens, just makes it sound pretty)
  */
 
-// use() returns null if it does nothing, or a string containing the prompt to give the AI narrator if it does do something
-// useResult() returns a string that reports its effects after being used
+class UseInfo {
+
+	constructor(prompt, result, usedUp) {
+		this.prompt = prompt; // the prompt to give the AI narrator
+		this.result = result; // a string that reports its effects after being used
+		this.usedUp = usedUp; // if the item should be removed from the inventory (since it was used)
+	}
+}
+
 let inventory = [
 	{
 		name: "Shortsword",
-		oneUse: false,
 		use: () => {
-			return null;
-		},
-		useResult: () => ""
+			return null; // use was cancelled
+		}
 	},
 	{
 		name: "Pack of rations",
-		oneUse: true,
 		use: () => {
-			return "The user uses a pack of rations to feed their party member, Solara.";
-		},
-		useResult: () => "Solara regains 4 HP and gains 10lbs!"
+			return new UseInfo(
+				"The user uses a pack of rations to feed their party member, Solara.",
+				"Solara regains 4 HP and gains 10lbs!",
+				true
+			);
+		}
 	},
 	{
 		name: "Minor healing spell",
-		oneUse: false,
 		use: () => {
-			return "Solara uses a healing spell which reverses minor wounds on the user.";;
-		},
-		useResult: () => "You regain 4 HP!"
+			return new UseInfo(
+				"Solara uses a healing spell which reverses minor wounds on the user.",
+				"You regain 4 HP!",
+				false
+			);
+		}
 	},
 ];
 
@@ -70,15 +79,15 @@ while (true) {
 
 				index--;
 
-				const prompt = inventory[index].use();
+				const useInfo = inventory[index].use();
 
-				if (prompt != null) {
+				if (useInfo != null) {
 
-					await asyncPromptAI(prompt);
+					await asyncPromptAI(useInfo.prompt);
 
-					console.log(inventory[index].useResult());
+					console.log(useInfo.result);
 
-					if (inventory[index].oneUse) {
+					if (useInfo.usedUp) {
 
 						console.log("The " + inventory[index].name.toLowerCase() + " was used up!");
 						inventory.splice(index, 1);
@@ -90,7 +99,7 @@ while (true) {
 
 		case "2":
 		case "go":
-			console.log("Going isn't a feature yet lol");
+			console.log("Going isn't a feature yet lol\n");
 			break;
 	}
 }

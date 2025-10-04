@@ -1,13 +1,10 @@
 # BotChip
 
-Goal: Open source, explicitly non-anthropomorphic wifebot software + hardware spec.
+Goal: Open source wifebot software.
+
+guaranteed unconditional affection. I want a personality and figure (flesh beings are more attractive physically... maybe a 3D model would suffice...)
 
 (since I just want 1. connection-on-demand and 2. booba, without having to ignore all the undesirable features of a human and their desires)
-
-1. emulate the high-level logic
-2. emulate the low-level logic (i.e. implementation on specific hardware, such as with this [arduino emulator](https://wokwi.com/arduino))
-3. implement it in a bulky, easy way physically
-4. cull it down to a default hardware spec that fits my usecase; a "system on a chip" (for embedding into a bodypillow :O) that has an arduino (nano?) processor, a microphone, and a speaker, also custom PCB
 
 Trying to keep it simple while still evoking a "this thing is alive" reaction. It would have to feel aware/responsive, with high interactivity, personality, and social understanding (e.g. if I tell it to be quiet, it complains but complies, understanding its situation/context) and, unlike a chatbot, feel like it's thinking even when it wasn't prompted first.
 

@@ -5,11 +5,12 @@ import { question } from "readline-sync";
 /*
  * types
  */
+
 class UseResult { // inventory Actions are "used"
 
 	constructor(prompt, result, usedUp) {
 		this.prompt = prompt; // the prompt to give the AI narrator
-		this.result = result; // a string that reports its effects after being used
+		this.result = result; // a string that reports its effects after being used. should be descriptive, since the AI doesn't give concrete details like variable changes
 		this.usedUp = usedUp; // if the item should be removed from the inventory (since it was used)
 	}
 }
@@ -17,8 +18,8 @@ class UseResult { // inventory Actions are "used"
 class DoResult { // location Actions are "done"
 
 	constructor(prompt, result) {
-		this.prompt = prompt; // the prompt to give the AI narrator
-		this.result = result; // a string that reports its effects after being done
+		this.prompt = prompt;
+		this.result = result;
 	}
 }
 
@@ -34,7 +35,7 @@ class Location {
 
 	constructor(displayName, prompt, actions) {
 		this.displayName = displayName;
-		this.prompt = prompt; // the prompt to give the AI narrator
+		this.prompt = prompt;
 		this.actions = actions; // list of Actions
 	}
 }
@@ -75,10 +76,22 @@ const MINOR_HEALING_SPELL = new Action("Minor healing spell", () => {
 	}
 });
 
+const VILLAGE = new Location("Village", "out in the village proper, where villagers are going about their day", [
+	new Action("Enter the inn", () => {
+
+		location = INN;
+
+		return new DoResult(
+			"The party heads into the nearby inn from the village proper",
+			"You are now in the inn."
+		);
+	})
+]);
+
 const INN = new Location("Inn", "sitting around a round table in the common area of the inn", [
 	new Action("Buy pack of rations from innkeeper (-5 silver coins)", () => {
 
-		if (money - 5 >= 30) {
+		if (money - 5 >= 0) {
 
 			inventory.push(PACK_OF_RATIONS);
 			money -= 5;
@@ -96,9 +109,14 @@ const INN = new Location("Inn", "sitting around a round table in the common area
 			);
 		}
 	}),
-	new Action("Go out into village", () => {
+	new Action("Leave the inn", () => {
 
-		return null;
+		location = VILLAGE;
+
+		return new DoResult(
+			"The party heads out of the dark inn into the bright village proper.",
+			"You are now in the village."
+		);
 	})
 ]);
 
@@ -106,7 +124,7 @@ const INN = new Location("Inn", "sitting around a round table in the common area
  * maintain the internal game state
  */
 
-let inventory = [ SHORT_SWORD, PACK_OF_RATIONS, PACK_OF_RATIONS, PACK_OF_RATIONS, MINOR_HEALING_SPELL ];
+let inventory = [ SHORT_SWORD, MINOR_HEALING_SPELL ];
 
 let location = INN;
 
@@ -115,6 +133,7 @@ let money = 20;
 /*
  * game action choice system
  */
+
 console.clear();
 console.log(`\x1b[33mYou've woken up after a long night's rest in an inn in a small village nestled within a grassy valley.
 			Currently, you and your party member Solara sit around a round table in the common area of the inn.
@@ -227,9 +246,12 @@ function smartQuestion(prompt = "\n[press enter]") {
 
 /*
  * AI backend (AI is only for narrative, which doesn't take in a huge dialogue but just information about
- * the current state, and doesn't determine what happens, just makes it sound pretty)
+ * the current game state, and doesn't determine what happens, just makes it sound pretty)
  */
+
 async function asyncNarrate(situationDescription) {
+
+	console.log("\x1b[2m\x1b[5mLoading...\x1b[0m");
 
 	const response = await ollama.chat({
 		model: "llama3.2:latest",
@@ -258,6 +280,8 @@ async function asyncNarrate(situationDescription) {
 			}
 		]
 	});
+
+	console.clear();
 
 	if (!response) {
 		console.error("Something went wrong!");

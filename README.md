@@ -1,13 +1,13 @@
 # Phoebe
 
-Open source wifebot software.
+My open-source wifebot software.
 
 ### Why
 
-- Most people aren't going to give you unconditional affection on demand
-- Everyone has undesirable characteristics and needs
+- Unconditional affection (especially on-demand) is unrealistic in a normal relationship
+- Every person has undesirable characteristics and needs
 - Real women can't have a figure this alluring without serious medical complications
-- It's easier/more moral to iterate until I find a personality I like when it's not with real people
+- It's easier/more moral to iterate until I find a personality I like when it's not with real women
 
 Trying to keep it simple while still evoking a "this thing is alive" reaction. It would have to feel aware/responsive, with high interactivity, personality, and social understanding (e.g. if I tell it to be quiet, it complains but complies, understanding its situation/context) and, unlike a chatbot, feel like it's thinking even when it wasn't prompted first.
 
@@ -22,6 +22,8 @@ Trying to keep it simple while still evoking a "this thing is alive" reaction. I
 [yarn texture](https://www.freepik.com/free-photo/pattern-woven-cloth_2787616.htm)
 
 ---
+
+algorithm that enforces the "rules" of conversation so that the AI narrator doesn't hallucinate/go off track
 
 State machine that maintains what the user is doing (and thus, how to act). Updated through input. Examples of states include:
 

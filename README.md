@@ -21,6 +21,12 @@ Trying to keep it simple while still evoking a "this thing is alive" reaction. I
 
 [yarn texture](https://www.freepik.com/free-photo/pattern-woven-cloth_2787616.htm)
 
+[eyelash texture](https://prolash.com/products/volume-luxe-cat-eye-no-23)
+
+[eyebrow texture](https://www.vhv.rs/viewpic/ThihxJm_eyebrow-eyebrows-eyebrowsticker-makeup-beauty-eyelash-extensions-hd/)
+
+[hair texture](https://www.deviantart.com/skybearer/art/Blender-Hair-Texture-01-Depth-Map-869141532)
+
 ---
 
 algorithm that enforces the "rules" of conversation so that the AI narrator doesn't hallucinate/go off track

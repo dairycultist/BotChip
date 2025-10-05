@@ -12,6 +12,8 @@ Trying to keep it simple while still evoking a "this thing is alive" reaction. I
 
 [![](https://preview.redd.it/wednesday-vibes-v0-1fzfw17lanwe1.jpeg?width=1080&crop=smart&auto=webp&s=64d873e3b5ae63a3295194ab5e993d812b2cb550)](https://sketchfab.com/3d-models/base-mesh-woman-5a958554686b4f539cefbe12cea48e13)
 
+![](https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e88813ee-ac6d-40e5-a059-20c27f9e0e14/dk9di0y-d2657eed-0b23-43d5-9ab6-29723ea9df70.jpg/v1/fit/w_828,h_1104,q_70,strp/normally_theyre_two_times_bigger_by_handsycasanova_dk9di0y-414w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTcwNyIsInBhdGgiOiIvZi9lODg4MTNlZS1hYzZkLTQwZTUtYTA1OS0yMGMyN2Y5ZTBlMTQvZGs5ZGkweS1kMjY1N2VlZC0wYjIzLTQzZDUtOWFiNi0yOTcyM2VhOWRmNzAuanBnIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.XxX5UB8vVUApf4UEW3uO0uLFob6tdpDhcX8Q1HVmu5A)
+
 ---
 
 State machine that maintains what the user is doing (and thus, how to act). Updated through input. Examples of states include:

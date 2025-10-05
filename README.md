@@ -18,6 +18,8 @@ Trying to keep it simple while still evoking a "this thing is alive" reaction. I
 
 [eye texture](https://www.freepik.com/free-psd/iris-eye-isolated_371241730.htm)
 
+[yarn texture](https://www.freepik.com/free-photo/pattern-woven-cloth_2787616.htm)
+
 ---
 
 State machine that maintains what the user is doing (and thus, how to act). Updated through input. Examples of states include:

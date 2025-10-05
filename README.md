@@ -1,6 +1,6 @@
-# BotChip
+# Phoebe
 
-Goal: Open source wifebot software.
+Open source wifebot software.
 
 guaranteed unconditional affection. I want a personality and figure (flesh beings are more attractive physically... maybe a 3D model would suffice...)
 

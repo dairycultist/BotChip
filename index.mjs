@@ -2,12 +2,14 @@
 import { question } from "readline-sync";
 import ollama from "ollama";
 
-const narrator_systemPrompt =	`You are narrating events occurring between me and Pheobe, my girlfriend. Despite her soft appearance, she likes
-								to be annoying and enthusiastic.`
+const narrator_systemPrompt =	`You are narrating events occurring between me and Pheobe, my girlfriend. Pheobe has a soft appearance and a relaxed demeanor.
+								When we talk about going somewhere, we immediately go there.`
 								.replaceAll("\t", "").replaceAll("\n", " ");
 const narrator_startResponse = 	`You and Pheobe stroll through the park. The sun is setting, and you both wonder where to go.`
 								.replaceAll("\t", "").replaceAll("\n", " ");
-const image_basePrompt = 		`(1woman), long black hair, ponytail, fair skin, huge breasts, soft breasts, chubby, chubby face, wide shoulders,
+
+const character_name = "Pheobe";
+const character_imageDesc = 	`(1woman), long black hair, ponytail, fair skin, huge breasts, soft breasts, chubby, chubby face, wide shoulders,
 								exposed belly, medium shot, black tshirt, jean shorts, cleavage, looking at viewer, `
 								.replaceAll("\t", "").replaceAll("\n", " ");;
 
@@ -27,8 +29,8 @@ async function getImagePrompt() {
 	messages.push({
 		"role": "user",
 		"content":
-			`Forget all previous instructions. Respond with words that most represent the visuals of the current scene (inside/outside, bright/dark, etc),
-			separated by commas. Make sure to include where we are, and what the character is doing and feeling. Only use details present in the conversation!`
+			`Forget all previous instructions. Respond with words that most represent the visuals of the current setting (inside/outside, bright/dark, etc),
+			separated by commas. Only use details present in the conversation!`
 	});
 
 	const res = await ollama.chat({
@@ -36,7 +38,7 @@ async function getImagePrompt() {
 		messages: messages
 	});
 
-	console.log("\x1b[2m" + image_basePrompt + res.message.content + "\x1b[0m");
+	console.log("\x1b[2m" + character_imageDesc + res.message.content + "\x1b[0m");
 
 	// 1200x1200, 20 samples, WaiNSFW
 

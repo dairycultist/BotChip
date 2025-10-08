@@ -39,3 +39,12 @@ algorithm/state machine updated through input (or lack thereof), which determine
 I don't want like, memory persistence across multiple conversations, so I don't need trillions of datapoints (and thus can run on embedded systems), I just want them to be like "what's up. when you start gooning can you let me watch lol"
 
 I'm gonna make my own model which is a fine-tune of the base model [llama3.2](https://ollama.com/library/llama3.2) by 1) taking hundreds to thousands of example conversations, or more 2) run a command to train the model (with ollama using external library [unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide/tutorial-how-to-finetune-llama-3-and-use-in-ollama) on paperspace). the model adjusts internal weights during that training time to learn specific personality stuffs. then test it!
+
+## Image Generation
+
+I can't find WaiNSFW but I use that model.
+
+- [lora:Immobile_USSBBW_Concept_Lora_for_Illustrious-XL](https://civitai.com/models/1196877/immobileblob-ussbbw-concept-lora-for-illustrious-xl)
+- [lora:HYPv1-4](https://civitai.com/models/645787?modelVersionId=1671255)
+- [lora:Weather_shine_pupils_mix](https://civitai.com/models/140809/weathershinepupilsmix-weathermix)
+- [lora:KrekkovLycoXLV2](https://civitai.com/models/311073/krekkov-style)

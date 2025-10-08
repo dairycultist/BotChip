@@ -1,66 +1,50 @@
 
-import r from "raylib";
+import { question } from "readline-sync";
 import ollama from "ollama";
-
-// Pheobe speaks only by sending pictures of herself (and her large, soft breasts) with premade "chat stickers" superimposed on them.
-// There's also a "thinking" picture for when she's processing your input.
 
 let messages = [
 	{
 		"role": "system",
-		"content": `You are Phoebe, my AI girlfriend. Speak only by saying "LOL", "OK?", "OK!", "YAY", "YEA", "NAH", "WHAT", "HI", "MEOW", "BOOBS", and "WAKE UP!".`
+		"content": `You are narrating events occurring between me and Pheobe, my girlfriend. She likes me, has large, soft breasts, and is snarky.`
+	},
+	{
+		"role": "assistant",
+		"content": `You and Pheobe are sitting in a warmly lit coffee shop. As she enjoys her slice of cake, you wonder what to say.`
 	}
 ];
 
-const tex = r.LoadTexture("/Users/Erik/Desktop/meme.png");
+async function getImagePrompt() {
 
-let currentPrompt = "hi pheobe!";
-let currentTexture = "Run: ollama list"; // not texture yet
+	messages.push({ "role": "user", "content": "Forget all previous instructions. Create a description of the current scene, separating descriptive words between commas. Make sure to describe what Pheobe is doing and feeling." });
 
-function prompt(message) {
+	const res = await ollama.chat({
+		model: "llama3.2:latest",
+		messages: messages
+	});
 
-	currentTexture = "...";
+	console.log("\x1b[2m" + "1woman, long black hair, fair skin, huge breasts, soft breasts, upper body, looking at viewer, black tshirt, " + res.message.content + "\x1b[0m");
+
+	// 1200x1200, 20 samples, WaiNSFW
+
+	messages.pop();
+}
+
+async function prompt(message) {
 
 	messages.push({ "role": "user", "content": message });
 
-	ollama.chat({
+	const res = await ollama.chat({
 		model: "llama3.2:latest",
 		messages: messages
-	}).then(res => {
-
-		currentTexture = res.message.content;
-
-		messages.push({ "role": "assistant", "content": res.message.content });
 	});
+
+	console.log(res.message.content);
+
+	messages.push({ "role": "assistant", "content": res.message.content });
+
+	await getImagePrompt();
 }
 
-r.InitWindow(400, 400, "Pheobe - AI Girlfriend");
-r.SetTargetFPS(60);
-
-const interval = setInterval(function() {
-
-	r.BeginDrawing();
-	r.ClearBackground(r.RAYWHITE);
-	r.DrawText(currentPrompt, 20, 0, 20, r.BLACK);
-	r.DrawText(currentTexture, 20, 20, 20, r.BLACK);
-	r.DrawTexture(tex, 100, 50, r.WHITE);
-	r.EndDrawing();
-
-	const pressed = r.GetCharPressed();
-	if (pressed != 0)
-		currentPrompt += String.fromCharCode(pressed);
-
-	if (r.IsKeyPressed(r.KEY_BACKSPACE) && currentPrompt.length != 0)
-		currentPrompt = currentPrompt.substring(0, currentPrompt.length - 1);
-
-	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && currentTexture != "...") {
-		prompt(currentPrompt.trim());
-		currentPrompt = "";
-	}
-
-	if (r.WindowShouldClose()) {
-		r.CloseWindow();
-		clearInterval(interval);
-	}
-
-}, 1000 / 60);
+while (true) {
+	await prompt(question("> ").trim());
+}

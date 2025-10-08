@@ -30,7 +30,7 @@ async function getImagePrompt() {
 		"role": "user",
 		"content":
 			`Forget all previous instructions. Respond with words that most represent the visuals of the current setting (inside/outside, bright/dark, etc),
-			separated by commas. Only use details present in the conversation!`
+			separated by commas. Make sure to include where we are, and what ${ character_name } is doing and feeling. Only use details present in the conversation!`
 	});
 
 	const res = await ollama.chat({

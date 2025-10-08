@@ -2,24 +2,25 @@
 import { question } from "readline-sync";
 import ollama from "ollama";
 
-const narrator_systemPrompt =	`You are narrating events occurring between me and Pheobe, my girlfriend. Pheobe has a soft appearance and a relaxed demeanor.
-								When we talk about going somewhere, we immediately go there.`
+const charName =				"Pheobe";
+
+const narrator_charDesc =		`Pheobe is my girlfriend. Pheobe has a soft appearance and a relaxed demeanor.`
 								.replaceAll("\t", "").replaceAll("\n", " ");
 const narrator_startResponse = 	`You and Pheobe stroll through the park. The sun is setting, and you both wonder where to go.`
 								.replaceAll("\t", "").replaceAll("\n", " ");
 
-const character_name = "Pheobe";
-const character_imageDesc = 	`<lora:Immobile_USSBBW_Concept_Lora_for_Illustrious-XL:0.2> <lora:HYPv1-4:0.3> <lora:Weather_shine_pupils_mix:1> <lora:KrekkovLycoXLV2:0.5>
+const imageGen_charDesc = 		`<lora:Immobile_USSBBW_Concept_Lora_for_Illustrious-XL:0.2> <lora:HYPv1-4:0.3> <lora:Weather_shine_pupils_mix:1> <lora:KrekkovLycoXLV2:0.5>
 								(1woman, betterwithsalt), long black hair, ponytail, fair skin, huge breasts, soft breasts, soft belly, chubby, chubby face, wide shoulders,
 								exposed belly, medium shot, black tshirt, jean shorts, cleavage, looking at viewer, `
 								.replaceAll("\t", "").replaceAll("\n", " ");;
 
 // 1200x1200, 20 samples, WaiNSFW + some loras
+// Neg: ugly, multiple subjects, 2girls, bad, text, watermark, nose
 
 let messages = [
 	{
 		"role": "system",
-		"content": narrator_systemPrompt
+		"content": `You are narrating events occurring between me and ${ charName }. When we talk about going somewhere, we immediately go there. ` + narrator_charDesc
 	},
 	{
 		"role": "assistant",
@@ -33,7 +34,7 @@ async function getImagePrompt() {
 		"role": "user",
 		"content":
 			`Forget all previous instructions. Respond with words that most represent the visuals of the current setting (inside/outside, bright/dark, etc),
-			separated by commas. Make sure to include where we are, and what ${ character_name } is doing and feeling. Only use details present in the conversation!`
+			separated by commas. Make sure to include where we are, and what ${ charName } is doing and feeling. Only use details present in the conversation!`
 	});
 
 	const res = await ollama.chat({
@@ -41,7 +42,7 @@ async function getImagePrompt() {
 		messages: messages
 	});
 
-	console.log("\x1b[2m" + character_imageDesc + res.message.content + "\x1b[0m");
+	console.log("\x1b[2m" + imageGen_charDesc + res.message.content + "\x1b[0m");
 
 	messages.pop();
 }

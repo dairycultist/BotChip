@@ -9,9 +9,12 @@ const narrator_startResponse = 	`You and Pheobe stroll through the park. The sun
 								.replaceAll("\t", "").replaceAll("\n", " ");
 
 const character_name = "Pheobe";
-const character_imageDesc = 	`(1woman), long black hair, ponytail, fair skin, huge breasts, soft breasts, chubby, chubby face, wide shoulders,
+const character_imageDesc = 	`<lora:Immobile_USSBBW_Concept_Lora_for_Illustrious-XL:0.2> <lora:HYPv1-4:0.3> <lora:Weather_shine_pupils_mix:1> <lora:KrekkovLycoXLV2:0.5>
+								(1woman, betterwithsalt), long black hair, ponytail, fair skin, huge breasts, soft breasts, soft belly, chubby, chubby face, wide shoulders,
 								exposed belly, medium shot, black tshirt, jean shorts, cleavage, looking at viewer, `
 								.replaceAll("\t", "").replaceAll("\n", " ");;
+
+// 1200x1200, 20 samples, WaiNSFW + some loras
 
 let messages = [
 	{
@@ -39,8 +42,6 @@ async function getImagePrompt() {
 	});
 
 	console.log("\x1b[2m" + character_imageDesc + res.message.content + "\x1b[0m");
-
-	// 1200x1200, 20 samples, WaiNSFW
 
 	messages.pop();
 }

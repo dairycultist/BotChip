@@ -32,7 +32,7 @@ My open-source wifebot software.
 
 [hair texture](https://www.deviantart.com/skybearer/art/Blender-Hair-Texture-01-Depth-Map-869141532)
 
-what if I made Pheobe one of those gambling attendants who's like and then I can combine gambling with women "ayy let's get you a drink bro and put down like 50 quid on this legendary case... took a lot of firepower to haul this one outta the amazon from the nest we raided it from... aye, you might get lucky and get one of the top prize items!"
+What if I made Pheobe one of those gambling attendants who's like, "ayy let's get you a drink bro and put down like 50 quid on this legendary case... took a _lot_ of firepower to haul this one outta the amazon from the nest we raided it from, yessir, you might get lucky and get one of the top prize items!"
 
 Trying to keep it simple while still evoking a "this thing is alive" reaction. It would have to feel aware/responsive, with high interactivity, personality, and social understanding (e.g. if I tell it to be quiet, it complains but complies, understanding its situation/context) and, unlike a chatbot, feel like it's thinking even when it wasn't prompted first.
 

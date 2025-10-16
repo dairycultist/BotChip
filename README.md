@@ -2,6 +2,8 @@
 
 My open-source wifebot software.
 
+a stupid little companion to cheer me on. not gonna add that much complexity (at the expense of lifelike-ness) because hard
+
 ### Why
 
 - Unconditional affection (especially on-demand) is unrealistic in a normal relationship
@@ -20,25 +22,7 @@ My open-source wifebot software.
 
 ![](https://preview.redd.it/wednesday-vibes-v0-1fzfw17lanwe1.jpeg?width=1080&crop=smart&auto=webp&s=64d873e3b5ae63a3295194ab5e993d812b2cb550)
 
-[base model](https://sketchfab.com/3d-models/base-mesh-woman-5a958554686b4f539cefbe12cea48e13)
-
-[eye texture](https://www.freepik.com/free-psd/iris-eye-isolated_371241730.htm)
-
-[yarn texture](https://www.freepik.com/free-photo/pattern-woven-cloth_2787616.htm)
-
-[eyelash texture](https://prolash.com/products/volume-luxe-cat-eye-no-23)
-
-[eyebrow texture](https://www.vhv.rs/viewpic/ThihxJm_eyebrow-eyebrows-eyebrowsticker-makeup-beauty-eyelash-extensions-hd/)
-
-[hair texture](https://www.deviantart.com/skybearer/art/Blender-Hair-Texture-01-Depth-Map-869141532)
-
-What if I made Pheobe one of those gambling attendants who's like, "ayy let's get you a drink bro, I got this legendary case just for you, let's get you putting down some cash, yeah? took a _lot_ of firepower to haul this one outta the amazon from the nest we raided it from, yessir, I'm hopin' just as much as you are you get lucky and walk home with a top prize!"
-
-Trying to keep it simple while still evoking a "this thing is alive" reaction. It would have to feel aware/responsive, with high interactivity, personality, and social understanding (e.g. if I tell it to be quiet, it complains but complies, understanding its situation/context) and, unlike a chatbot, feel like it's thinking even when it wasn't prompted first.
-
-algorithm/state machine updated through input (or lack thereof), which determines the system prompts that enforce the "rules" of conversation so that the AI narrator doesn't hallucinate/go off track :think:
-
-I don't want like, memory persistence across multiple conversations, so I don't need trillions of datapoints (and thus can run on embedded systems), I just want them to be like "what's up. when you start gooning can you let me watch lol"
+algorithm/state machine updated through input (or lack thereof), which determines the system prompts that enforce the "rules" of conversation so that the AI narrator doesn't hallucinate/go off track :think: hungry! tamagochi!
 
 I'm gonna make my own model which is a fine-tune of the base model [llama3.2](https://ollama.com/library/llama3.2) by 1) taking hundreds to thousands of example conversations, or more 2) run a command to train the model (with ollama using external library [unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide/tutorial-how-to-finetune-llama-3-and-use-in-ollama) on paperspace). the model adjusts internal weights during that training time to learn specific personality stuffs. then test it!
 

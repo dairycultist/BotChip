@@ -1,70 +1,70 @@
-
-import { question } from "readline-sync";
+import r from "raylib";
 import ollama from "ollama";
-
-const charName =				"Pheobe";
-
-const narrator_charDesc =		`Pheobe is my girlfriend. Pheobe has a soft appearance and a relaxed demeanor.`
-								.replaceAll("\t", "").replaceAll("\n", " ");
-const narrator_startResponse = 	`You and Pheobe stroll through the park. The sun is setting, and you both wonder where to go.`
-								.replaceAll("\t", "").replaceAll("\n", " ");
-
-const imageGen_charDesc = 		`<lora:Immobile_USSBBW_Concept_Lora_for_Illustrious-XL:0.2> <lora:HYPv1-4:0.3> <lora:Weather_shine_pupils_mix:1> <lora:KrekkovLycoXLV2:0.5>
-								(1woman, betterwithsalt), long black hair, ponytail, fair skin, huge breasts, soft breasts, soft belly, chubby, chubby face, wide shoulders,
-								exposed belly, medium shot, black tshirt, jean shorts, cleavage, looking at viewer, `
-								.replaceAll("\t", "").replaceAll("\n", " ");;
-
-// 1200x1200, 20 samples, WaiNSFW + some loras
-// Neg: ugly, multiple subjects, 2girls, bad, text, watermark, nose
 
 let messages = [
 	{
 		"role": "system",
-		"content": `You are narrating events occurring between me and ${ charName }. When we talk about going somewhere, we immediately go there. ` + narrator_charDesc
+		"content": `You are narrating events occurring between me and Pheobe. When we talk about going somewhere, we immediately go there. Pheobe is my girlfriend. Pheobe has a soft appearance and a relaxed demeanor.`
 	},
 	{
 		"role": "assistant",
-		"content": narrator_startResponse
+		"content": `You and Pheobe stroll through the park. The sun is setting, and you both wonder where to go.`
 	}
 ];
 
-async function getImagePrompt() {
+let currentPrompt = "hi pheobe!";
+let displayText = messages[1].content;
 
-	messages.push({
-		"role": "user",
-		"content":
-			`Forget all previous instructions. Respond with words that most represent the visuals of the current setting (inside/outside, bright/dark, etc),
-			separated by commas. Make sure to include where we are, and what ${ charName } is doing and feeling. Only use details present in the conversation!`
-	});
+function prompt(message) {
 
-	const res = await ollama.chat({
-		model: "llama3.2:latest",
-		messages: messages
-	});
-
-	console.log("\x1b[2m" + imageGen_charDesc + res.message.content + "\x1b[0m");
-
-	messages.pop();
-}
-
-async function prompt(message) {
+	displayText = "...";
 
 	messages.push({ "role": "user", "content": message });
 
-	const res = await ollama.chat({
+	ollama.chat({
 		model: "llama3.2:latest",
 		messages: messages
+	}).then(res => {
+
+		displayText = res.message.content;
+
+		messages.push({ "role": "assistant", "content": res.message.content });
 	});
-
-	console.log(res.message.content);
-
-	messages.push({ "role": "assistant", "content": res.message.content });
-
-	await getImagePrompt();
 }
 
-console.log(narrator_startResponse);
+r.InitWindow(900, 600, "Pheobe - AI Girlfriend");
+r.SetTargetFPS(60);
 
-while (true) {
-	await prompt(question("> ").trim());
-}
+const tex = r.LoadTexture("holly.png");
+
+const interval = setInterval(function() {
+
+	r.BeginDrawing();
+	r.ClearBackground(r.RAYWHITE);
+	if (Math.floor((Date.now() / 500) % 2) == 0) {
+		r.DrawText(currentPrompt + "_", 20, 0, 20, r.BLACK);
+	} else {
+		r.DrawText(currentPrompt, 20, 0, 20, r.BLACK);
+	}
+	r.DrawText(displayText, 20, 20, 20, r.BLACK);
+	r.DrawTexturePro(tex, new r.Rectangle(0, 0, tex.width, tex.height), new r.Rectangle(50, 100, 400, 400), new r.Vector2(0, 0), 0, r.RAYWHITE);
+	r.EndDrawing();
+
+	const pressed = r.GetCharPressed();
+	if (pressed != 0)
+		currentPrompt += String.fromCharCode(pressed);
+
+	if (r.IsKeyPressed(r.KEY_BACKSPACE) && currentPrompt.length != 0)
+		currentPrompt = currentPrompt.substring(0, currentPrompt.length - 1);
+
+	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && displayText != "...") {
+		prompt(currentPrompt.trim());
+		currentPrompt = "";
+	}
+
+	if (r.WindowShouldClose()) {
+		r.CloseWindow();
+		clearInterval(interval);
+	}
+
+}, 1000 / 60);

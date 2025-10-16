@@ -11,21 +11,27 @@ let messages = [
 
 let currentPrompt = "";
 let currentResponse = "";
+let responding = false;
 
 function prompt(message) {
 
-	currentResponse = "...";
+	currentResponse = "";
+	responding = true;
 
 	messages.push({ "role": "user", "content": message });
 
 	ollama.chat({
 		model: "llama3.2:latest",
-		messages: messages
-	}).then(res => {
+		messages: messages,
+		stream: true
+	}).then(async (asyncGenerator) => {
 
-		currentResponse = res.message.content;
+		for await (const part of asyncGenerator) {
+			currentResponse += part.message.content;
+		}
 
-		messages.push({ "role": "assistant", "content": res.message.content });
+		messages.push({ "role": "assistant", "content": currentResponse });
+		responding = false;
 	});
 }
 
@@ -49,18 +55,21 @@ const cupcakeSprite = r.LoadTexture("res/cupcake.png");
 
 const interval = setInterval(function() {
 
-	// test speech sounds
-	let playing = false;
+	// speech sounds
+	if (responding) {
 
-	for (let sound of speechSounds) {
-		
-		if (r.IsSoundPlaying(sound)) {
-			playing = true;
+		let playing = false;
+
+		for (let sound of speechSounds) {
+			
+			if (r.IsSoundPlaying(sound)) {
+				playing = true;
+			}
 		}
-	}
 
-	if (!playing)
-		r.PlaySound(speechSounds[Math.floor(Math.random() * speechSounds.length)]);
+		if (!playing)
+			r.PlaySound(speechSounds[Math.floor(Math.random() * speechSounds.length)]);
+	}
 
 	// draw
 	r.BeginDrawing();
@@ -74,11 +83,7 @@ const interval = setInterval(function() {
 	}
 
 	// draw response balloon + text
-	if (currentResponse == "...") {
-		r.DrawText("...".substring(3 - (Date.now() / 330) % 3), 420, 80, 20, r.BLACK);
-	} else {
-		drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
-	}
+	drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
 
 	// draw character sprite
 	let width = -Math.sin(Date.now() / 200) * 10 + 400;
@@ -100,7 +105,7 @@ const interval = setInterval(function() {
 	if (r.IsKeyPressed(r.KEY_BACKSPACE) && currentPrompt.length != 0)
 		currentPrompt = currentPrompt.substring(0, currentPrompt.length - 1);
 
-	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && currentResponse != "...") {
+	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && !responding) {
 		prompt(currentPrompt.trim());
 		currentPrompt = "";
 	}

@@ -1,8 +1,8 @@
-# Phoebe
-
-My open-source wifebot software.
+# My open-source wifebot software
 
 a stupid little companion to cheer me on. not gonna add that much complexity (at the expense of lifelike-ness) because hard
+
+none of the components need be perfect (or even good) since I can iterate on... her
 
 ### Why
 

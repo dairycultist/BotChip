@@ -10,11 +10,11 @@ let messages = [
 ];
 
 let currentPrompt = "";
-let displayText = "";
+let currentResponse = "";
 
 function prompt(message) {
 
-	displayText = "...";
+	currentResponse = "...";
 
 	messages.push({ "role": "user", "content": message });
 
@@ -23,7 +23,7 @@ function prompt(message) {
 		messages: messages
 	}).then(res => {
 
-		displayText = res.message.content;
+		currentResponse = res.message.content;
 
 		messages.push({ "role": "assistant", "content": res.message.content });
 	});
@@ -40,13 +40,18 @@ const interval = setInterval(function() {
 
 	r.BeginDrawing();
 	r.ClearBackground(r.RAYWHITE);
+
+	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {
 		r.DrawText(">" + currentPrompt + "_", 20, 0, 20, r.BLACK);
 	} else {
 		r.DrawText(">" + currentPrompt, 20, 0, 20, r.BLACK);
 	}
-	r.DrawText(displayText, 20, 20, 20, r.BLACK);
 
+	// draw response balloon + text
+	drawTextFixedWidth(currentResponse, 500);
+
+	// draw Holly
 	let width = -Math.sin(Date.now() / 200) * 10 + 400;
 	let height = Math.sin(Date.now() / 200) * 10 + 400;
 	r.DrawTexturePro(
@@ -67,7 +72,7 @@ const interval = setInterval(function() {
 	if (r.IsKeyPressed(r.KEY_BACKSPACE) && currentPrompt.length != 0)
 		currentPrompt = currentPrompt.substring(0, currentPrompt.length - 1);
 
-	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && displayText != "...") {
+	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && currentResponse != "...") {
 		prompt(currentPrompt.trim());
 		currentPrompt = "";
 	}
@@ -78,3 +83,25 @@ const interval = setInterval(function() {
 	}
 
 }, 1000 / 60);
+
+function drawTextFixedWidth(text, width) {
+
+	let toDraw = text;
+	let later = "";
+	let i = 0;
+
+	while (toDraw != "") {
+
+		while (r.MeasureTextEx(r.GetFontDefault(), toDraw, 20, 0).x > width) {
+
+			let index = toDraw.lastIndexOf(" ", toDraw.lastIndexOf(" ") - 1) + 1;
+			later = toDraw.substring(index) + later;
+			toDraw = toDraw.substring(0, index);
+		}
+
+		r.DrawText(toDraw, 20, 20 + 20 * i, 20, r.BLACK);
+		toDraw = later;
+		later = "";
+		i++;
+	}
+}

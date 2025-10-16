@@ -33,14 +33,36 @@ execSync("ollama list"); // initialize ollama
 
 r.SetConfigFlags(r.FLAG_WINDOW_RESIZABLE);
 r.InitWindow(900, 600, "Waifu");
+r.InitAudioDevice();
 r.SetTargetFPS(60);
 
-const characterSprite = r.LoadTexture("holly.png");
-const smoreSprite = r.LoadTexture("smore.png");
-const cupcakeSprite = r.LoadTexture("cupcake.png");
+const speechSounds = [
+	r.LoadSound("res/speak_mi.ogg"),
+	r.LoadSound("res/speak_ya.ogg"),
+	r.LoadSound("res/speak_ngo.ogg"),
+	r.LoadSound("res/speak_hi.ogg")
+];
+
+const characterSprite = r.LoadTexture("res/holly.png");
+const smoreSprite = r.LoadTexture("res/smore.png");
+const cupcakeSprite = r.LoadTexture("res/cupcake.png");
 
 const interval = setInterval(function() {
 
+	// test speech sounds
+	let playing = false;
+
+	for (let sound of speechSounds) {
+		
+		if (r.IsSoundPlaying(sound)) {
+			playing = true;
+		}
+	}
+
+	if (!playing)
+		r.PlaySound(speechSounds[Math.floor(Math.random() * speechSounds.length)]);
+
+	// draw
 	r.BeginDrawing();
 	r.ClearBackground(r.RAYWHITE);
 
@@ -84,6 +106,7 @@ const interval = setInterval(function() {
 	}
 
 	if (r.WindowShouldClose()) {
+		r.CloseAudioDevice();
 		r.CloseWindow();
 		clearInterval(interval);
 	}

@@ -4,16 +4,12 @@ import ollama from "ollama";
 let messages = [
 	{
 		"role": "system",
-		"content": `You are narrating events occurring between me and Pheobe. When we talk about going somewhere, we immediately go there. Pheobe is my girlfriend. Pheobe has a soft appearance and a relaxed demeanor.`
-	},
-	{
-		"role": "assistant",
-		"content": `You and Pheobe stroll through the park. The sun is setting, and you both wonder where to go.`
+		"content": `You are narrating events occurring between me and Holly, my fat pet eevee. Holly is fat, has a soft appearance, and speaks cutely. We're in our bedroom.`
 	}
 ];
 
-let currentPrompt = "hi pheobe!";
-let displayText = messages[1].content;
+let currentPrompt = "";
+let displayText = "";
 
 function prompt(message) {
 
@@ -42,12 +38,12 @@ const interval = setInterval(function() {
 	r.BeginDrawing();
 	r.ClearBackground(r.RAYWHITE);
 	if (Math.floor((Date.now() / 500) % 2) == 0) {
-		r.DrawText(currentPrompt + "_", 20, 0, 20, r.BLACK);
+		r.DrawText(">" + currentPrompt + "_", 20, 0, 20, r.BLACK);
 	} else {
-		r.DrawText(currentPrompt, 20, 0, 20, r.BLACK);
+		r.DrawText(">" + currentPrompt, 20, 0, 20, r.BLACK);
 	}
 	r.DrawText(displayText, 20, 20, 20, r.BLACK);
-	r.DrawTexturePro(tex, new r.Rectangle(0, 0, tex.width, tex.height), new r.Rectangle(50, 100, 400, 400), new r.Vector2(0, 0), 0, r.RAYWHITE);
+	r.DrawTexturePro(tex, new r.Rectangle(0, 0, tex.width, tex.height), new r.Rectangle(400, 600, 400, 400), new r.Vector2(200, 400), Math.sin(Date.now() / 1000) * 10, r.RAYWHITE);
 	r.EndDrawing();
 
 	const pressed = r.GetCharPressed();

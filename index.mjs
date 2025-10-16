@@ -5,7 +5,7 @@ import { execSync } from "child_process";
 let messages = [
 	{
 		"role": "system",
-		"content": `You are narrating events occurring between me and Holly, my fat pet eevee. Holly is fat, has a soft appearance, and speaks cutely. We're in our bedroom.`
+		"content": `You are Holly, my fat pet eevee. Holly is fat, has a soft appearance, and speaks cutely. She's in my bedroom.`
 	}
 ];
 
@@ -49,7 +49,11 @@ const interval = setInterval(function() {
 	}
 
 	// draw response balloon + text
-	drawTextFixedWidth(currentResponse, 500);
+	if (currentResponse == "...") {
+		r.DrawText("...".substring(3 - (Date.now() / 330) % 3), 420, 40, 20, r.BLACK);
+	} else {
+		drawTextFixedWidth(currentResponse, 100, 40, 20, 500);
+	}
 
 	// draw Holly
 	let width = -Math.sin(Date.now() / 200) * 10 + 400;
@@ -84,7 +88,7 @@ const interval = setInterval(function() {
 
 }, 1000 / 60);
 
-function drawTextFixedWidth(text, width) {
+function drawTextFixedWidth(text, x, y, fontSize, width) {
 
 	let toDraw = text;
 	let later = "";
@@ -92,14 +96,14 @@ function drawTextFixedWidth(text, width) {
 
 	while (toDraw != "") {
 
-		while (r.MeasureTextEx(r.GetFontDefault(), toDraw, 20, 0).x > width) {
+		while (r.MeasureTextEx(r.GetFontDefault(), toDraw, fontSize, 0).x > width) {
 
 			let index = toDraw.lastIndexOf(" ", toDraw.lastIndexOf(" ") - 1) + 1;
 			later = toDraw.substring(index) + later;
 			toDraw = toDraw.substring(0, index);
 		}
 
-		r.DrawText(toDraw, 20, 20 + 20 * i, 20, r.BLACK);
+		r.DrawText(toDraw, x, y + fontSize * i, fontSize, r.BLACK);
 		toDraw = later;
 		later = "";
 		i++;

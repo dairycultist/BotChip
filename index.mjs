@@ -31,10 +31,13 @@ function prompt(message) {
 
 execSync("ollama list"); // initialize ollama
 
+r.SetConfigFlags(r.FLAG_WINDOW_RESIZABLE);
 r.InitWindow(900, 600, "Waifu");
 r.SetTargetFPS(60);
 
-const tex = r.LoadTexture("holly.png");
+const characterSprite = r.LoadTexture("holly.png");
+const smoreSprite = r.LoadTexture("smore.png");
+const cupcakeSprite = r.LoadTexture("cupcake.png");
 
 const interval = setInterval(function() {
 
@@ -55,17 +58,14 @@ const interval = setInterval(function() {
 		drawTextFixedWidth(currentResponse, 100, 40, 20, 500);
 	}
 
-	// draw Holly
+	// draw character sprite
 	let width = -Math.sin(Date.now() / 200) * 10 + 400;
 	let height = Math.sin(Date.now() / 200) * 10 + 400;
-	r.DrawTexturePro(
-		tex,
-		new r.Rectangle(0, 0, tex.width, tex.height),
-		new r.Rectangle(400, 600, width, height),
-		new r.Vector2(width / 2, height),
-		Math.sin(Date.now() / 1000) * 10,
-		r.RAYWHITE
-	);
+	drawSprite(characterSprite, 400, 600, width, height, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
+
+	// draw food
+	drawSprite(smoreSprite, 30, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150) * 10);
+	drawSprite(cupcakeSprite, 90, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150) * 10);
 	
 	r.EndDrawing();
 
@@ -87,6 +87,18 @@ const interval = setInterval(function() {
 	}
 
 }, 1000 / 60);
+
+function drawSprite(sprite, x, y, w, h, pivotU, pivotV, a) {
+
+	r.DrawTexturePro(
+		sprite,
+		new r.Rectangle(0, 0, sprite.width, sprite.height),
+		new r.Rectangle(x, y, w, h),
+		new r.Vector2(w * pivotU, h * pivotV),
+		a,
+		r.RAYWHITE
+	);
+}
 
 function drawTextFixedWidth(text, x, y, fontSize, width) {
 

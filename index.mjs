@@ -1,5 +1,6 @@
 import r from "raylib";
 import ollama from "ollama";
+import { execSync } from "child_process";
 
 let messages = [
 	{
@@ -28,7 +29,9 @@ function prompt(message) {
 	});
 }
 
-r.InitWindow(900, 600, "Pheobe - AI Girlfriend");
+execSync("ollama list"); // initialize ollama
+
+r.InitWindow(900, 600, "Waifu");
 r.SetTargetFPS(60);
 
 const tex = r.LoadTexture("holly.png");
@@ -43,7 +46,18 @@ const interval = setInterval(function() {
 		r.DrawText(">" + currentPrompt, 20, 0, 20, r.BLACK);
 	}
 	r.DrawText(displayText, 20, 20, 20, r.BLACK);
-	r.DrawTexturePro(tex, new r.Rectangle(0, 0, tex.width, tex.height), new r.Rectangle(400, 600, 400, 400), new r.Vector2(200, 400), Math.sin(Date.now() / 1000) * 10, r.RAYWHITE);
+
+	let width = -Math.sin(Date.now() / 200) * 10 + 400;
+	let height = Math.sin(Date.now() / 200) * 10 + 400;
+	r.DrawTexturePro(
+		tex,
+		new r.Rectangle(0, 0, tex.width, tex.height),
+		new r.Rectangle(400, 600, width, height),
+		new r.Vector2(width / 2, height),
+		Math.sin(Date.now() / 1000) * 10,
+		r.RAYWHITE
+	);
+	
 	r.EndDrawing();
 
 	const pressed = r.GetCharPressed();

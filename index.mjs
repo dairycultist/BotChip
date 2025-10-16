@@ -53,9 +53,9 @@ const interval = setInterval(function() {
 
 	// draw response balloon + text
 	if (currentResponse == "...") {
-		r.DrawText("...".substring(3 - (Date.now() / 330) % 3), 420, 40, 20, r.BLACK);
+		r.DrawText("...".substring(3 - (Date.now() / 330) % 3), 420, 80, 20, r.BLACK);
 	} else {
-		drawTextFixedWidth(currentResponse, 100, 40, 20, 500);
+		drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
 	}
 
 	// draw character sprite
@@ -65,7 +65,9 @@ const interval = setInterval(function() {
 
 	// draw food
 	drawSprite(smoreSprite, 30, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150) * 10);
-	drawSprite(cupcakeSprite, 90, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150) * 10);
+
+	for (let i = 1; i < 5; i++)
+		drawSprite(cupcakeSprite, 30 + 60 * i, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 	
 	r.EndDrawing();
 

@@ -13,7 +13,10 @@ let currentPrompt = "";
 let currentResponse = "";
 let responding = false;
 
-function prompt(message) {
+function attemptPrompt(message) { // returns true if it was able to prompt, false if it's in the middle of processing a previous prompt
+
+	if (responding)
+		return false;
 
 	currentResponse = "";
 	responding = true;
@@ -33,6 +36,8 @@ function prompt(message) {
 		messages.push({ "role": "assistant", "content": currentResponse });
 		responding = false;
 	});
+
+	return true;
 }
 
 execSync("ollama list"); // initialize ollama
@@ -108,10 +113,8 @@ const interval = setInterval(function() {
 				drawSprite(foods[i].sprite, 72, 72, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 				r.SetMouseCursor(r.MOUSE_CURSOR_POINTING_HAND);
 
-				if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT)) {
-
-					prompt("*Feeds you a big " + foods[i].name + "*");
-				}
+				if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT))
+					attemptPrompt("*Feeds you a big " + foods[i].name + "*");
 
 			} else {
 				drawSprite(foods[i].sprite, 64, 64, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
@@ -133,10 +136,8 @@ const interval = setInterval(function() {
 	if (r.IsKeyPressed(r.KEY_BACKSPACE) && currentPrompt.length != 0)
 		currentPrompt = currentPrompt.substring(0, currentPrompt.length - 1);
 
-	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && !responding) {
-		prompt(currentPrompt.trim());
+	if (r.IsKeyPressed(r.KEY_ENTER) && currentPrompt.trim().length != 0 && attemptPrompt(currentPrompt.trim()))
 		currentPrompt = "";
-	}
 
 	if (r.WindowShouldClose()) {
 		r.CloseAudioDevice();

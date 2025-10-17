@@ -5,7 +5,7 @@ import { execSync } from "child_process";
 let messages = [
 	{
 		"role": "system",
-		"content": `You are Holly, my fat pet eevee. Holly is fat, has a soft appearance, and speaks cutely. She's in my bedroom.`
+		"content": `You are Holly, my fat pet eevee. Holly is fat, has a soft appearance, and speaks cutely.`
 	}
 ];
 
@@ -62,7 +62,7 @@ const foodSprites = [
 const interval = setInterval(function() {
 
 	// speech sounds
-	if (responding) {
+	if (responding && currentResponse != "") {
 
 		let playing = false;
 
@@ -77,9 +77,24 @@ const interval = setInterval(function() {
 			r.PlaySound(speechSounds[Math.floor(Math.random() * speechSounds.length)]);
 	}
 
+	// click
+	if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT)) {
+		
+		const clickPos = r.GetMousePosition();
+
+		if (Math.abs(clickPos.y - 82) < 32) {
+			console.log("click");
+		}
+	}
+
 	// draw
 	r.BeginDrawing();
 	r.ClearBackground(r.RAYWHITE);
+
+	// draw character sprite
+	let squishW = -Math.sin(Date.now() / 200) * 10;
+	let squishH = Math.sin(Date.now() / 200) * 10;
+	drawSprite(characterSprite, 200 - squishW / 2, 200 - squishH, 400 + squishW, 400 + squishH, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {
@@ -90,11 +105,6 @@ const interval = setInterval(function() {
 
 	// draw response balloon + text
 	drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
-
-	// draw character sprite
-	let width = -Math.sin(Date.now() / 200) * 10 + 400;
-	let height = Math.sin(Date.now() / 200) * 10 + 400;
-	drawSprite(characterSprite, 400, 600, width, height, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
 
 	// draw food
 	for (let i = 0; i < 5; i++)
@@ -127,7 +137,7 @@ function drawSprite(sprite, x, y, w, h, pivotU, pivotV, a) {
 	r.DrawTexturePro(
 		sprite,
 		new r.Rectangle(0, 0, sprite.width, sprite.height),
-		new r.Rectangle(x, y, w, h),
+		new r.Rectangle(x + w * pivotU, y + h * pivotV, w, h),
 		new r.Vector2(w * pivotU, h * pivotV),
 		a,
 		r.RAYWHITE

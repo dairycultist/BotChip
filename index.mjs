@@ -64,6 +64,7 @@ const growthSound = r.LoadSound("res/growth.ogg");
 const characterSprites = [
 	r.LoadTexture("res/holly_slim.png"),
 	r.LoadTexture("res/holly_chubby.png"),
+	r.LoadTexture("res/holly_fat.png"),
 	r.LoadTexture("res/holly_obese.png")
 ];
 
@@ -82,30 +83,51 @@ const actions = [
 	{
 		sprite: r.LoadTexture("res/cupcake.png"),
 		attemptUse: () => {
-			attemptPrompt("*Feeds you a big cupcake*");
+			
+			if (attemptPrompt("*Feeds you a big cupcake*")) {
+				r.PlaySound(growthSound);
+				hunger = Math.max(0, hunger - 0.2);
+				eatingAnimationTimer = 0;
+			}
 		}
 	},
 	{
 		sprite: r.LoadTexture("res/cookie.png"),
 		attemptUse: () => {
-			attemptPrompt("*Feeds you a big cookie*");
+			
+			if (attemptPrompt("*Feeds you a big cookie*")) {
+				r.PlaySound(growthSound);
+				hunger = Math.max(0, hunger - 0.2);
+				eatingAnimationTimer = 0;
+			}
 		}
 	},
 	{
 		sprite: r.LoadTexture("res/brownie.png"),
 		attemptUse: () => {
-			attemptPrompt("*Feeds you a big brownie*");
+			
+			if (attemptPrompt("*Feeds you a big brownie*")) {
+				r.PlaySound(growthSound);
+				hunger = Math.max(0, hunger - 0.2);
+				eatingAnimationTimer = 0;
+			}
 		}
 	},
 	{
 		sprite: r.LoadTexture("res/donut.png"),
 		attemptUse: () => {
-			attemptPrompt("*Feeds you a big donut*");
+			
+			if (attemptPrompt("*Feeds you a big donut*")) {
+				r.PlaySound(growthSound);
+				hunger = Math.max(0, hunger - 0.2);
+				eatingAnimationTimer = 0;
+			}
 		}
 	},
 	{
 		sprite: r.LoadTexture("res/beachball.png"),
 		attemptUse: () => {
+
 			attemptPrompt("*Starts playing with a beachball with you*");
 		}
 	}

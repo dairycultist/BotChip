@@ -100,31 +100,30 @@ const interval = setInterval(function() {
 	// draw response balloon + text
 	drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
 
-	// food draw/logic
+	// action draw/logic
+	// TODO add sudsy sponge for cleaning
+	// TODO add toy for playing
 	const mousePos = r.GetMousePosition();
-	r.SetMouseCursor(r.MOUSE_CURSOR_DEFAULT);
+	let hovering = false;
 
-	if (Math.abs(mousePos.y - 50) < 32) {
-		
-		for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < foods.length; i++) {
 
-			if (Math.abs(mousePos.x - (30 + 60 * i)) < 32) {
+		const x = 40 + 60 * i;
+		const y = 50;
 
-				drawSprite(foods[i].sprite, 72, 72, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
-				r.SetMouseCursor(r.MOUSE_CURSOR_POINTING_HAND);
+		r.DrawRectangle(x - 24, y - 24, 48, 48, r.LIGHTGRAY);
+		drawSprite(foods[i].sprite, 64, 64, x, y, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 
-				if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT))
-					attemptPrompt("*Feeds you a big " + foods[i].name + "*");
+		if (Math.abs(mousePos.x - x) < 24 && Math.abs(mousePos.y - y) < 24) {
 
-			} else {
-				drawSprite(foods[i].sprite, 64, 64, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
-			}
+			hovering = true;
+
+			if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT))
+				attemptPrompt("*Feeds you a big " + foods[i].name + "*");
 		}
-	} else {
-
-		for (let i = 0; i < 5; i++)
-			drawSprite(foods[i].sprite, 64, 64, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 	}
+
+	r.SetMouseCursor(hovering ? r.MOUSE_CURSOR_POINTING_HAND : r.MOUSE_CURSOR_DEFAULT);
 	
 	r.EndDrawing();
 

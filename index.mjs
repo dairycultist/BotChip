@@ -61,8 +61,11 @@ const speechSounds = [
 
 const growthSound = r.LoadSound("res/growth.ogg");
 
-const characterSpriteSlim = r.LoadTexture("res/holly_slim.png");
-const characterSpriteObese = r.LoadTexture("res/holly_obese.png");
+const characterSprites = [
+	r.LoadTexture("res/holly_slim.png"),
+	r.LoadTexture("res/holly_chubby.png"),
+	r.LoadTexture("res/holly_obese.png")
+];
 
 const actions = [
 	{
@@ -144,7 +147,7 @@ const interval = setInterval(function() {
 	width += (100 / (eatingAnimationTimer * 3 + 1)); // eating animation
 	height -= (100 / (eatingAnimationTimer * 3 + 1));
 
-	drawSprite(hunger > 0.5 ? characterSpriteSlim : characterSpriteObese, width, height, 450, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10 * (1 - hunger));
+	drawSprite(characterSprites[Math.floor((1 - hunger) * (characterSprites.length * 0.9))], width, height, 450, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10 * (1 - hunger));
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {

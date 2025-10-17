@@ -63,6 +63,7 @@ const actions = [
 	{ sprite: r.LoadTexture("res/brownie.png"), attemptUse: () => { attemptPrompt("*Feeds you a big brownie*"); } },
 	{ sprite: r.LoadTexture("res/donut.png"), attemptUse: () => { attemptPrompt("*Feeds you a big donut*"); } },
 	{ sprite: r.LoadTexture("res/beachball.png"), attemptUse: () => { attemptPrompt("*Starts playing with a beachball with you*"); } }
+	// TODO add sudsy sponge for cleaning
 ];
 
 const interval = setInterval(function() {
@@ -79,6 +80,7 @@ const interval = setInterval(function() {
 			
 			if (r.IsSoundPlaying(sound)) {
 				playing = true;
+				break;
 			}
 		}
 
@@ -102,17 +104,18 @@ const interval = setInterval(function() {
 	drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
 
 	// action draw/logic
-	// TODO add sudsy sponge for cleaning
 	const mousePos = r.GetMousePosition();
 	let hovering = false;
 
 	for (let i = 0; i < actions.length; i++) {
 
-		const x = 40 + 60 * i;
-		const y = 50;
+		const x = 40 + 60 * (i % 5);
+		const y = 50 + Math.floor(i / 5) * 64;
 
+		// shelf
 		r.DrawRectangleGradientV(x - 24, y - 24, 48, 48, r.RAYWHITE, r.LIGHTGRAY);
 
+		// hover logic
 		if (Math.abs(mousePos.x - x) < 24 && Math.abs(mousePos.y - y) < 24) {
 
 			hovering = true;

@@ -56,12 +56,13 @@ const speechSounds = [
 
 const characterSprite = r.LoadTexture("res/holly.png");
 
-const foods = [
-	{ sprite: r.LoadTexture("res/smore.png"), name: "s'more" },
-	{ sprite: r.LoadTexture("res/cupcake.png"), name: "cupcake" },
-	{ sprite: r.LoadTexture("res/cookie.png"), name: "cookie" },
-	{ sprite: r.LoadTexture("res/brownie.png"), name: "brownie" },
-	{ sprite: r.LoadTexture("res/donut.png"), name: "donut" },
+const actions = [
+	{ sprite: r.LoadTexture("res/smore.png"), attemptUse: () => { attemptPrompt("*Feeds you a big s'more*"); } },
+	{ sprite: r.LoadTexture("res/cupcake.png"), attemptUse: () => { attemptPrompt("*Feeds you a big cupcake*"); } },
+	{ sprite: r.LoadTexture("res/cookie.png"), attemptUse: () => { attemptPrompt("*Feeds you a big cookie*"); } },
+	{ sprite: r.LoadTexture("res/brownie.png"), attemptUse: () => { attemptPrompt("*Feeds you a big brownie*"); } },
+	{ sprite: r.LoadTexture("res/donut.png"), attemptUse: () => { attemptPrompt("*Feeds you a big donut*"); } },
+	{ sprite: r.LoadTexture("res/beachball.png"), attemptUse: () => { attemptPrompt("*Starts playing with a beachball with you*"); } }
 ];
 
 const interval = setInterval(function() {
@@ -102,24 +103,28 @@ const interval = setInterval(function() {
 
 	// action draw/logic
 	// TODO add sudsy sponge for cleaning
-	// TODO add toy for playing
 	const mousePos = r.GetMousePosition();
 	let hovering = false;
 
-	for (let i = 0; i < foods.length; i++) {
+	for (let i = 0; i < actions.length; i++) {
 
 		const x = 40 + 60 * i;
 		const y = 50;
 
 		r.DrawRectangleGradientV(x - 24, y - 24, 48, 48, r.RAYWHITE, r.LIGHTGRAY);
-		drawSprite(foods[i].sprite, 64, 64, x, y, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 
 		if (Math.abs(mousePos.x - x) < 24 && Math.abs(mousePos.y - y) < 24) {
 
 			hovering = true;
 
 			if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT))
-				attemptPrompt("*Feeds you a big " + foods[i].name + "*");
+				actions[i].attemptUse();
+
+			drawSprite(actions[i].sprite, 72, 72, x, y, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
+
+		} else {
+
+			drawSprite(actions[i].sprite, 64, 64, x, y, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 		}
 	}
 

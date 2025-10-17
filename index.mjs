@@ -40,6 +40,9 @@ function attemptPrompt(message) { // returns true if it was able to prompt, fals
 	return true;
 }
 
+// tamagotchi stats (maybe dirtiness, boredom, tiredness?)
+let weight = 100.0;
+
 execSync("ollama list"); // initialize ollama
 
 r.SetConfigFlags(r.FLAG_WINDOW_RESIZABLE);
@@ -54,15 +57,51 @@ const speechSounds = [
 	r.LoadSound("res/speak_hi.ogg")
 ];
 
+const growthSound = r.LoadSound("res/growth.ogg");
+
 const characterSprite = r.LoadTexture("res/holly.png");
 
 const actions = [
-	{ sprite: r.LoadTexture("res/smore.png"), attemptUse: () => { attemptPrompt("*Feeds you a big s'more*"); } },
-	{ sprite: r.LoadTexture("res/cupcake.png"), attemptUse: () => { attemptPrompt("*Feeds you a big cupcake*"); } },
-	{ sprite: r.LoadTexture("res/cookie.png"), attemptUse: () => { attemptPrompt("*Feeds you a big cookie*"); } },
-	{ sprite: r.LoadTexture("res/brownie.png"), attemptUse: () => { attemptPrompt("*Feeds you a big brownie*"); } },
-	{ sprite: r.LoadTexture("res/donut.png"), attemptUse: () => { attemptPrompt("*Feeds you a big donut*"); } },
-	{ sprite: r.LoadTexture("res/beachball.png"), attemptUse: () => { attemptPrompt("*Starts playing with a beachball with you*"); } }
+	{
+		sprite: r.LoadTexture("res/smore.png"),
+		attemptUse: () => {
+
+			if (attemptPrompt("*Feeds you a big s'more*")) {
+				r.PlaySound(growthSound);
+				weight += 10;
+			}
+		}
+	},
+	{
+		sprite: r.LoadTexture("res/cupcake.png"),
+		attemptUse: () => {
+			attemptPrompt("*Feeds you a big cupcake*");
+		}
+	},
+	{
+		sprite: r.LoadTexture("res/cookie.png"),
+		attemptUse: () => {
+			attemptPrompt("*Feeds you a big cookie*");
+		}
+	},
+	{
+		sprite: r.LoadTexture("res/brownie.png"),
+		attemptUse: () => {
+			attemptPrompt("*Feeds you a big brownie*");
+		}
+	},
+	{
+		sprite: r.LoadTexture("res/donut.png"),
+		attemptUse: () => {
+			attemptPrompt("*Feeds you a big donut*");
+		}
+	},
+	{
+		sprite: r.LoadTexture("res/beachball.png"),
+		attemptUse: () => {
+			attemptPrompt("*Starts playing with a beachball with you*");
+		}
+	}
 	// TODO add sudsy sponge for cleaning
 ];
 
@@ -89,7 +128,7 @@ const interval = setInterval(function() {
 	}
 
 	// draw character sprite
-	let width = -Math.sin(Date.now() / 200) * 10 + 400;
+	let width = -Math.sin(Date.now() / 200) * 10 + 300 + weight;
 	let height = Math.sin(Date.now() / 200) * 10 + 400;
 	drawSprite(characterSprite, width, height, 450, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
 

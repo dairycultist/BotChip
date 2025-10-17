@@ -111,7 +111,7 @@ const interval = setInterval(function() {
 		const x = 40 + 60 * i;
 		const y = 50;
 
-		r.DrawRectangle(x - 24, y - 24, 48, 48, r.LIGHTGRAY);
+		r.DrawRectangleGradientV(x - 24, y - 24, 48, 48, r.RAYWHITE, r.LIGHTGRAY);
 		drawSprite(foods[i].sprite, 64, 64, x, y, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 
 		if (Math.abs(mousePos.x - x) < 24 && Math.abs(mousePos.y - y) < 24) {
@@ -160,22 +160,24 @@ function drawSprite(sprite, w, h, pivotX, pivotY, pivotU = 0.5, pivotV = 0.5, a 
 
 function drawTextFixedWidth(text, x, y, fontSize, width) {
 
-	let toDraw = text;
-	let later = "";
-	let i = 0;
+	let construct = "";
 
-	while (toDraw != "") {
+	let line = text;
+	let nextLine = "";
 
-		while (r.MeasureTextEx(r.GetFontDefault(), toDraw, fontSize, 0).x > width) {
+	while (line != "") {
 
-			let index = toDraw.lastIndexOf(" ", toDraw.lastIndexOf(" ") - 1) + 1;
-			later = toDraw.substring(index) + later;
-			toDraw = toDraw.substring(0, index);
+		while (r.MeasureTextEx(r.GetFontDefault(), line, fontSize, 0).x > width) {
+
+			let index = line.lastIndexOf(" ", line.lastIndexOf(" ") - 1) + 1;
+			nextLine = line.substring(index) + nextLine;
+			line = line.substring(0, index);
 		}
 
-		r.DrawText(toDraw, x, y + fontSize * i, fontSize, r.BLACK);
-		toDraw = later;
-		later = "";
-		i++;
+		construct += line + "\n";
+		line = nextLine;
+		nextLine = "";
 	}
+
+	r.DrawText(construct, x, y, fontSize, r.BLACK);
 }

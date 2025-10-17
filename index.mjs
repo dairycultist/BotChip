@@ -40,8 +40,10 @@ function attemptPrompt(message) { // returns true if it was able to prompt, fals
 	return true;
 }
 
-// tamagotchi stats (maybe dirtiness, boredom, tiredness?)
-let weight = 100.0;
+// tamagotchi stats [0.0,1.0] (maybe dirtiness, boredom, tiredness?)
+let hunger = 1.0;
+
+let eatingAnimationTimer = 0.0;
 
 execSync("ollama list"); // initialize ollama
 
@@ -59,7 +61,8 @@ const speechSounds = [
 
 const growthSound = r.LoadSound("res/growth.ogg");
 
-const characterSprite = r.LoadTexture("res/holly.png");
+const characterSpriteSlim = r.LoadTexture("res/holly_slim.png");
+const characterSpriteObese = r.LoadTexture("res/holly_obese.png");
 
 const actions = [
 	{
@@ -68,7 +71,8 @@ const actions = [
 
 			if (attemptPrompt("*Feeds you a big s'more*")) {
 				r.PlaySound(growthSound);
-				weight += 10;
+				hunger = Math.max(0, hunger - 0.2);
+				eatingAnimationTimer = 0;
 			}
 		}
 	},
@@ -128,9 +132,19 @@ const interval = setInterval(function() {
 	}
 
 	// draw character sprite
-	let width = -Math.sin(Date.now() / 200) * 10 + 300 + weight;
-	let height = Math.sin(Date.now() / 200) * 10 + 400;
-	drawSprite(characterSprite, width, height, 450, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
+	eatingAnimationTimer += r.GetFrameTime();
+
+	let width = 400;
+	let height = 400;
+
+	let fac = 2 / (1 + Math.pow(10, -eatingAnimationTimer)) - 1;
+	width -= Math.sin(Date.now() / 200) * 5 * fac; // idle bobbing
+	height += Math.sin(Date.now() / 200) * 5 * fac;
+
+	width += (100 / (eatingAnimationTimer * 3 + 1)); // eating animation
+	height -= (100 / (eatingAnimationTimer * 3 + 1));
+
+	drawSprite(hunger > 0.5 ? characterSpriteSlim : characterSpriteObese, width, height, 450, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10 * (1 - hunger));
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {

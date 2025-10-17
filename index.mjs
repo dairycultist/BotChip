@@ -51,15 +51,18 @@ const speechSounds = [
 
 const characterSprite = r.LoadTexture("res/holly.png");
 
-const foodSprites = [
-	r.LoadTexture("res/smore.png"),
-	r.LoadTexture("res/cupcake.png"),
-	r.LoadTexture("res/cookie.png"),
-	r.LoadTexture("res/brownie.png"),
-	r.LoadTexture("res/donut.png"),
+const foods = [
+	{ sprite: r.LoadTexture("res/smore.png"), name: "s'more" },
+	{ sprite: r.LoadTexture("res/cupcake.png"), name: "cupcake" },
+	{ sprite: r.LoadTexture("res/cookie.png"), name: "cookie" },
+	{ sprite: r.LoadTexture("res/brownie.png"), name: "brownie" },
+	{ sprite: r.LoadTexture("res/donut.png"), name: "donut" },
 ];
 
 const interval = setInterval(function() {
+
+	r.BeginDrawing();
+	r.ClearBackground(r.RAYWHITE);
 
 	// speech sounds
 	if (responding && currentResponse != "") {
@@ -77,24 +80,10 @@ const interval = setInterval(function() {
 			r.PlaySound(speechSounds[Math.floor(Math.random() * speechSounds.length)]);
 	}
 
-	// click
-	if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT)) {
-		
-		const clickPos = r.GetMousePosition();
-
-		if (Math.abs(clickPos.y - 82) < 32) {
-			console.log("click");
-		}
-	}
-
-	// draw
-	r.BeginDrawing();
-	r.ClearBackground(r.RAYWHITE);
-
 	// draw character sprite
-	let squishW = -Math.sin(Date.now() / 200) * 10;
-	let squishH = Math.sin(Date.now() / 200) * 10;
-	drawSprite(characterSprite, 200 - squishW / 2, 200 - squishH, 400 + squishW, 400 + squishH, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
+	let width = -Math.sin(Date.now() / 200) * 10 + 400;
+	let height = Math.sin(Date.now() / 200) * 10 + 400;
+	drawSprite(characterSprite, width, height, 450, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {
@@ -106,12 +95,37 @@ const interval = setInterval(function() {
 	// draw response balloon + text
 	drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
 
-	// draw food
-	for (let i = 0; i < 5; i++)
-		drawSprite(foodSprites[i], 30 + 60 * i, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
+	// food draw/logic
+	const mousePos = r.GetMousePosition();
+	r.SetMouseCursor(r.MOUSE_CURSOR_DEFAULT);
+
+	if (Math.abs(mousePos.y - 50) < 32) {
+		
+		for (let i = 0; i < 5; i++) {
+
+			if (Math.abs(mousePos.x - (30 + 60 * i)) < 32) {
+
+				drawSprite(foods[i].sprite, 72, 72, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
+				r.SetMouseCursor(r.MOUSE_CURSOR_POINTING_HAND);
+
+				if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT)) {
+
+					prompt("*Feeds you a big " + foods[i].name + "*");
+				}
+
+			} else {
+				drawSprite(foods[i].sprite, 64, 64, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
+			}
+		}
+	} else {
+
+		for (let i = 0; i < 5; i++)
+			drawSprite(foods[i].sprite, 64, 64, 30 + 60 * i, 50, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
+	}
 	
 	r.EndDrawing();
 
+	// typing logic
 	const pressed = r.GetCharPressed();
 	if (pressed != 0)
 		currentPrompt += String.fromCharCode(pressed);
@@ -132,12 +146,12 @@ const interval = setInterval(function() {
 
 }, 1000 / 60);
 
-function drawSprite(sprite, x, y, w, h, pivotU, pivotV, a) {
+function drawSprite(sprite, w, h, pivotX, pivotY, pivotU = 0.5, pivotV = 0.5, a = 0) {
 
 	r.DrawTexturePro(
 		sprite,
 		new r.Rectangle(0, 0, sprite.width, sprite.height),
-		new r.Rectangle(x + w * pivotU, y + h * pivotV, w, h),
+		new r.Rectangle(pivotX, pivotY, w, h),
 		new r.Vector2(w * pivotU, h * pivotV),
 		a,
 		r.RAYWHITE

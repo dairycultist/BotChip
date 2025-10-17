@@ -131,7 +131,7 @@ const actions = [
 			attemptPrompt("*Starts playing with a beachball with you*");
 		}
 	}
-	// TODO add sudsy sponge for cleaning
+	// TODO add blue sudsy sponge for cleaning
 ];
 
 const interval = setInterval(function() {

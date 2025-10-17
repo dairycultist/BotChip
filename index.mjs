@@ -50,8 +50,14 @@ const speechSounds = [
 ];
 
 const characterSprite = r.LoadTexture("res/holly.png");
-const smoreSprite = r.LoadTexture("res/smore.png");
-const cupcakeSprite = r.LoadTexture("res/cupcake.png");
+
+const foodSprites = [
+	r.LoadTexture("res/smore.png"),
+	r.LoadTexture("res/cupcake.png"),
+	r.LoadTexture("res/cookie.png"),
+	r.LoadTexture("res/brownie.png"),
+	r.LoadTexture("res/donut.png"),
+];
 
 const interval = setInterval(function() {
 
@@ -91,10 +97,8 @@ const interval = setInterval(function() {
 	drawSprite(characterSprite, 400, 600, width, height, 0.5, 1, Math.sin(Date.now() / 1000) * 10);
 
 	// draw food
-	drawSprite(smoreSprite, 30, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150) * 10);
-
-	for (let i = 1; i < 5; i++)
-		drawSprite(cupcakeSprite, 30 + 60 * i, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
+	for (let i = 0; i < 5; i++)
+		drawSprite(foodSprites[i], 30 + 60 * i, 50, 64, 64, 0.5, 0.5, Math.sin(Date.now() / 150 - 0.5 * i) * 10);
 	
 	r.EndDrawing();
 

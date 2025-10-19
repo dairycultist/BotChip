@@ -5,7 +5,7 @@ import { execSync } from "child_process";
 let messages = [
 	{
 		"role": "system",
-		"content": `You are Holly, my fat pet eevee. Holly is fat, has a soft appearance, and speaks cutely.`
+		"content": `You are Holly, my fat witch girlfriend. Holly is fat, has a soft appearance, and speaks cutely.`
 	}
 ];
 
@@ -43,8 +43,6 @@ function attemptPrompt(message) { // returns true if it was able to prompt, fals
 // tamagotchi stats [0.0,1.0] (maybe dirtiness, boredom, tiredness?)
 let hunger = 1.0;
 
-let eatingAnimationTimer = 0.0;
-
 execSync("ollama list"); // initialize ollama
 
 // r.SetConfigFlags(r.FLAG_WINDOW_RESIZABLE);
@@ -61,12 +59,10 @@ const speechSounds = [
 
 const growthSound = r.LoadSound("res/growth.ogg");
 
-const characterSprites = [
-	r.LoadTexture("res/holly_slim.png"),
-	r.LoadTexture("res/holly_chubby.png"),
-	r.LoadTexture("res/holly_fat.png"),
-	r.LoadTexture("res/holly_obese.png")
-];
+const headSprite = r.LoadTexture("res/chibi_head.png");
+const torsoSprite = r.LoadTexture("res/chibi_torso.png");
+const armSprite = r.LoadTexture("res/chibi_arm.png");
+const legsSprite = r.LoadTexture("res/chibi_legs.png");
 
 const actions = [
 	{
@@ -76,7 +72,6 @@ const actions = [
 			if (attemptPrompt("*Feeds you a big s'more*")) {
 				r.PlaySound(growthSound);
 				hunger = Math.max(0, hunger - 0.2);
-				eatingAnimationTimer = 0;
 			}
 		}
 	},
@@ -87,7 +82,6 @@ const actions = [
 			if (attemptPrompt("*Feeds you a big cupcake*")) {
 				r.PlaySound(growthSound);
 				hunger = Math.max(0, hunger - 0.2);
-				eatingAnimationTimer = 0;
 			}
 		}
 	},
@@ -98,7 +92,6 @@ const actions = [
 			if (attemptPrompt("*Feeds you a big cookie*")) {
 				r.PlaySound(growthSound);
 				hunger = Math.max(0, hunger - 0.2);
-				eatingAnimationTimer = 0;
 			}
 		}
 	},
@@ -109,7 +102,6 @@ const actions = [
 			if (attemptPrompt("*Feeds you a big brownie*")) {
 				r.PlaySound(growthSound);
 				hunger = Math.max(0, hunger - 0.2);
-				eatingAnimationTimer = 0;
 			}
 		}
 	},
@@ -120,7 +112,6 @@ const actions = [
 			if (attemptPrompt("*Feeds you a big donut*")) {
 				r.PlaySound(growthSound);
 				hunger = Math.max(0, hunger - 0.2);
-				eatingAnimationTimer = 0;
 			}
 		}
 	},
@@ -157,19 +148,14 @@ const interval = setInterval(function() {
 	}
 
 	// draw character sprite
-	eatingAnimationTimer += r.GetFrameTime();
-
 	let width = 400;
 	let height = 400;
 
-	let fac = 2 / (1 + Math.pow(10, -eatingAnimationTimer)) - 1; // fac between eating animation and idle bobbing
-	width -= Math.sin(Date.now() / 200) * 5 * fac; // idle bobbing
-	height += Math.sin(Date.now() / 200) * 5 * fac;
-
-	width += (100 / (eatingAnimationTimer * 3 + 1)); // eating animation
-	height -= (100 / (eatingAnimationTimer * 3 + 1));
-
-	drawSprite(characterSprites[Math.floor((1 - hunger) * (characterSprites.length * 0.9))], width, height, 600, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10 * (1 - hunger));
+	drawSprite(legsSprite, width, height, 600, 470, 0.5, 0.5);
+	drawSprite(armSprite, width, height, 580, 320, 0.5, 0.5, Math.sin(Date.now() / 200) * 5);
+	drawSprite(armSprite, width, height, 620, 320, 0.5, 0.5, -Math.sin(Date.now() / 200) * 5, true);
+	drawSprite(torsoSprite, width, height, 600, 400, 0.5, 0.5);
+	drawSprite(headSprite, width, height, 600, 305, 0.5, 0.5, Math.sin(Date.now() / 1000) * 5);
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {
@@ -232,11 +218,11 @@ const interval = setInterval(function() {
 
 }, 1000 / 60);
 
-function drawSprite(sprite, w, h, pivotX, pivotY, pivotU = 0.5, pivotV = 0.5, a = 0) {
+function drawSprite(sprite, w, h, pivotX, pivotY, pivotU = 0.5, pivotV = 0.5, a = 0, mirror = false) {
 
 	r.DrawTexturePro(
 		sprite,
-		new r.Rectangle(0, 0, sprite.width, sprite.height),
+		new r.Rectangle(0, 0, mirror ? -sprite.width : sprite.width, sprite.height),
 		new r.Rectangle(pivotX, pivotY, w, h),
 		new r.Vector2(w * pivotU, h * pivotV),
 		a,

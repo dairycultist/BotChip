@@ -57,6 +57,8 @@ const speechSounds = [
 const growthSound = r.LoadSound("res/growth.ogg");
 
 const headSprite = r.LoadTexture("res/chibi_head.png");
+const headMouthOpenSprite = r.LoadTexture("res/chibi_head_mouthopen.png");
+const headEyesClosedSprite = r.LoadTexture("res/chibi_head_eyesclosed.png");
 const torsoSprite = r.LoadTexture("res/chibi_torso.png");
 const armSprite = r.LoadTexture("res/chibi_arm.png");
 const legsSprite = r.LoadTexture("res/chibi_legs.png");
@@ -147,7 +149,7 @@ const interval = setInterval(function() {
 	drawSprite(armSprite, width, height, 580 + Math.sin(Date.now() / 1000) * 3, 420, 0.5, 0.5, Math.sin(Date.now() / 200) * 5);
 	drawSprite(armSprite, width, height, 620 + Math.sin(Date.now() / 1000) * 3, 420, 0.5, 0.5, -Math.sin(Date.now() / 200) * 5, true);
 	drawSprite(torsoSprite, width, height, 600, 500, 0.5, 0.5, Math.sin(Date.now() / 1000) * 3);
-	drawSprite(headSprite, width, height, 600 + Math.sin(Date.now() / 1000) * 3, 405, 0.5, 0.5, Math.sin(Date.now() / 1000) * 5);
+	drawSprite(responding && currentResponse != "" && Math.sin(Date.now() / 25) > 0 ? headMouthOpenSprite : (Math.sin(Date.now() / 500) * Math.sin(Date.now() / 124) > 0.7 ? headEyesClosedSprite : headSprite), width, height, 600 + Math.sin(Date.now() / 1000) * 3, 405, 0.5, 0.5, Math.sin(Date.now() / 1000) * 5);
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {

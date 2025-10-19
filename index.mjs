@@ -5,7 +5,7 @@ import { execSync } from "child_process";
 let messages = [
 	{
 		"role": "system",
-		"content": `You are Holly, my fat witch girlfriend. Holly is fat, has a soft appearance, and speaks cutely.`
+		"content": `You are Holly, my fat witch girlfriend. Holly is fat, has a soft appearance, and speaks cutely. Don't talk too long.`
 	}
 ];
 
@@ -40,9 +40,6 @@ function attemptPrompt(message) { // returns true if it was able to prompt, fals
 	return true;
 }
 
-// tamagotchi stats [0.0,1.0] (maybe dirtiness, boredom, tiredness?)
-let hunger = 1.0;
-
 execSync("ollama list"); // initialize ollama
 
 // r.SetConfigFlags(r.FLAG_WINDOW_RESIZABLE);
@@ -71,7 +68,6 @@ const actions = [
 
 			if (attemptPrompt("*Feeds you a big s'more*")) {
 				r.PlaySound(growthSound);
-				hunger = Math.max(0, hunger - 0.2);
 			}
 		}
 	},
@@ -81,7 +77,6 @@ const actions = [
 			
 			if (attemptPrompt("*Feeds you a big cupcake*")) {
 				r.PlaySound(growthSound);
-				hunger = Math.max(0, hunger - 0.2);
 			}
 		}
 	},
@@ -91,7 +86,6 @@ const actions = [
 			
 			if (attemptPrompt("*Feeds you a big cookie*")) {
 				r.PlaySound(growthSound);
-				hunger = Math.max(0, hunger - 0.2);
 			}
 		}
 	},
@@ -101,7 +95,6 @@ const actions = [
 			
 			if (attemptPrompt("*Feeds you a big brownie*")) {
 				r.PlaySound(growthSound);
-				hunger = Math.max(0, hunger - 0.2);
 			}
 		}
 	},
@@ -111,7 +104,6 @@ const actions = [
 			
 			if (attemptPrompt("*Feeds you a big donut*")) {
 				r.PlaySound(growthSound);
-				hunger = Math.max(0, hunger - 0.2);
 			}
 		}
 	},
@@ -151,11 +143,11 @@ const interval = setInterval(function() {
 	let width = 400;
 	let height = 400;
 
-	drawSprite(legsSprite, width, height, 600, 470, 0.5, 0.5);
-	drawSprite(armSprite, width, height, 580, 320, 0.5, 0.5, Math.sin(Date.now() / 200) * 5);
-	drawSprite(armSprite, width, height, 620, 320, 0.5, 0.5, -Math.sin(Date.now() / 200) * 5, true);
-	drawSprite(torsoSprite, width, height, 600, 400, 0.5, 0.5);
-	drawSprite(headSprite, width, height, 600, 305, 0.5, 0.5, Math.sin(Date.now() / 1000) * 5);
+	drawSprite(legsSprite, width, height, 600, 570, 0.5, 0.5);
+	drawSprite(armSprite, width, height, 580 + Math.sin(Date.now() / 1000) * 3, 420, 0.5, 0.5, Math.sin(Date.now() / 200) * 5);
+	drawSprite(armSprite, width, height, 620 + Math.sin(Date.now() / 1000) * 3, 420, 0.5, 0.5, -Math.sin(Date.now() / 200) * 5, true);
+	drawSprite(torsoSprite, width, height, 600, 500, 0.5, 0.5, Math.sin(Date.now() / 1000) * 3);
+	drawSprite(headSprite, width, height, 600 + Math.sin(Date.now() / 1000) * 3, 405, 0.5, 0.5, Math.sin(Date.now() / 1000) * 5);
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {

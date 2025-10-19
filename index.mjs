@@ -47,8 +47,8 @@ let eatingAnimationTimer = 0.0;
 
 execSync("ollama list"); // initialize ollama
 
-r.SetConfigFlags(r.FLAG_WINDOW_RESIZABLE);
-r.InitWindow(900, 600, "Waifu");
+// r.SetConfigFlags(r.FLAG_WINDOW_RESIZABLE);
+r.InitWindow(800, 600, "Waifu");
 r.InitAudioDevice();
 r.SetTargetFPS(60);
 
@@ -162,24 +162,24 @@ const interval = setInterval(function() {
 	let width = 400;
 	let height = 400;
 
-	let fac = 2 / (1 + Math.pow(10, -eatingAnimationTimer)) - 1;
+	let fac = 2 / (1 + Math.pow(10, -eatingAnimationTimer)) - 1; // fac between eating animation and idle bobbing
 	width -= Math.sin(Date.now() / 200) * 5 * fac; // idle bobbing
 	height += Math.sin(Date.now() / 200) * 5 * fac;
 
 	width += (100 / (eatingAnimationTimer * 3 + 1)); // eating animation
 	height -= (100 / (eatingAnimationTimer * 3 + 1));
 
-	drawSprite(characterSprites[Math.floor((1 - hunger) * (characterSprites.length * 0.9))], width, height, 450, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10 * (1 - hunger));
+	drawSprite(characterSprites[Math.floor((1 - hunger) * (characterSprites.length * 0.9))], width, height, 600, 600, 0.5, 1, Math.sin(Date.now() / 1000) * 10 * (1 - hunger));
 
 	// draw current prompt input area
 	if (Math.floor((Date.now() / 500) % 2) == 0) {
-		r.DrawText(">" + currentPrompt + "_", 20, 0, 20, r.BLACK);
+		r.DrawText(">" + currentPrompt + "_", 400, 0, 20, r.BLACK);
 	} else {
-		r.DrawText(">" + currentPrompt, 20, 0, 20, r.BLACK);
+		r.DrawText(">" + currentPrompt, 400, 0, 20, r.BLACK);
 	}
 
 	// draw response balloon + text
-	drawTextFixedWidth(currentResponse, 100, 80, 20, 500);
+	drawTextFixedWidth(currentResponse, 400, 40, 20, 300);
 
 	// action draw/logic
 	const mousePos = r.GetMousePosition();
@@ -188,7 +188,7 @@ const interval = setInterval(function() {
 	for (let i = 0; i < actions.length; i++) {
 
 		const x = 40 + 60 * (i % 5);
-		const y = 50 + Math.floor(i / 5) * 64;
+		const y = 40 + Math.floor(i / 5) * 64;
 
 		// shelf
 		r.DrawRectangleGradientV(x - 24, y - 24, 48, 48, r.RAYWHITE, r.LIGHTGRAY);
@@ -253,7 +253,7 @@ function drawTextFixedWidth(text, x, y, fontSize, width) {
 
 	while (line != "") {
 
-		while (r.MeasureTextEx(r.GetFontDefault(), line, fontSize, 0).x > width) {
+		while (r.MeasureTextEx(r.GetFontDefault(), line.replaceAll("\n", ""), fontSize, 0).x > width) {
 
 			let index = line.lastIndexOf(" ", line.lastIndexOf(" ") - 1) + 1;
 			nextLine = line.substring(index) + nextLine;
